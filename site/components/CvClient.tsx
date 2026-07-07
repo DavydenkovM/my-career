@@ -78,7 +78,7 @@ export function CvClient({ items }: { items: { ru: Experience[]; en: Experience[
               </span>
               <a
                 className="link no-print"
-                href="https://github.com/your-handle/your-career-site"
+                href="https://github.com/DavydenkovM/my-career"
                 target="_blank"
                 rel="noreferrer noopener"
               >
