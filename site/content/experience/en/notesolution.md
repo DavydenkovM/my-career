@@ -11,13 +11,13 @@ aboutTags:
   - EdTech
   - Web3
   - Blockchain
+  - Solidity
   - Real-time trading
   - International team
   - SSR
   - PWA
   - SPA
-  - AMP
-  - SEO optimizations
+  - AMP & SEO optimizations
   - schema.org / micro-markup
   - next.js
   - HighCharts.js
@@ -38,6 +38,39 @@ highlights:
   - real-time priority-buy exchange tool
   - 5+ on-chain projects
   - 50+ interviews
+media:
+  - src: "/screenshots/notesolution/oneclass-main.png"
+    caption: "OneClass — home (EdTech, North America)"
+  - src: "/screenshots/notesolution/oneclass-study-materials.png"
+    caption: "OneClass — study materials: Study Guides, Class Notes, Textbook Notes"
+  - src: "/screenshots/notesolution/oneclass-study-guides.png"
+    caption: "OneClass — Study Guides (desktop, top of week)"
+  - src: "/screenshots/notesolution/oneclass-study-guides-mobile.png"
+    caption: "OneClass — Study Guides (mobile, SEO/SSR)"
+  - src: "/screenshots/notesolution/oneclass-booster-classes.png"
+    caption: "OneClass — Booster Classes (paid courses with college credit)"
+  - src: "/screenshots/notesolution/oneclass-homework-help.png"
+    caption: "OneClass — Homework Help (main feed)"
+  - src: "/screenshots/notesolution/oneclass-homework-help-questions.png"
+    caption: "OneClass — Homework Help with the question feed"
+  - src: "/screenshots/notesolution/homework-help-mobile.png"
+    caption: "OneClass — Homework Help (mobile, real-time watchers)"
+  - src: "/screenshots/notesolution/easyke-main.png"
+    caption: "Easyke — Chinese version of the platform"
+  - src: "/screenshots/notesolution/photon-landing.png"
+    caption: "Photon SOL — token sniping tool (landing)"
+  - src: "/screenshots/notesolution/photon-trading-table.png"
+    caption: "Photon SOL — Discover: real-time new-pairs table"
+  - src: "/screenshots/notesolution/photon-monitor.png"
+    caption: "Photon SOL — Monitor: real-time chart, transactions, holders"
+  - src: "/screenshots/notesolution/photon-autotrading-tools.png"
+    caption: "Photon SOL — Quick Buy/Sell: auto-approve and batched sells"
+  - src: "/screenshots/notesolution/tinyastro-landing.png"
+    caption: "Tiny Astro — NFT analytics: Astro Analytics + Astro Marketplace"
+  - src: "/screenshots/notesolution/tinyastro-dashboards.png"
+    caption: "Tiny Astro — collection dashboards: sales, listings, momentum, gas"
+  - src: "/screenshots/notesolution/astro-analytics-tokens.png"
+    caption: "Astro Analytics — genesis collection with lifetime access"
 ---
 
 - Built an online education platform for universities in North America and China: notes exchange, tutor sessions, exam prep, homework help.

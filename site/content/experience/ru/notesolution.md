@@ -11,13 +11,13 @@ aboutTags:
   - EdTech
   - Web3
   - Blockchain
+  - Solidity
   - Real-time trading
   - International team
   - SSR
   - PWA
   - SPA
-  - AMP
-  - SEO optimizations
+  - AMP & SEO optimizations
   - schema.org / micro-markup
   - next.js
   - HighCharts.js
@@ -38,6 +38,39 @@ highlights:
   - real-time биржа приоритетной покупки
   - 5+ on-chain спецпроектов
   - 50+ интервью
+media:
+  - src: "/screenshots/notesolution/oneclass-main.png"
+    caption: "OneClass — главная (EdTech, Северная Америка)"
+  - src: "/screenshots/notesolution/oneclass-study-materials.png"
+    caption: "OneClass — учебные материалы: Study Guides, Class Notes, Textbook Notes"
+  - src: "/screenshots/notesolution/oneclass-study-guides.png"
+    caption: "OneClass — Study Guides (desktop, top of week)"
+  - src: "/screenshots/notesolution/oneclass-study-guides-mobile.png"
+    caption: "OneClass — Study Guides (mobile, SEO/SSR)"
+  - src: "/screenshots/notesolution/oneclass-booster-classes.png"
+    caption: "OneClass — Booster Classes (платные курсы с кредитами)"
+  - src: "/screenshots/notesolution/oneclass-homework-help.png"
+    caption: "OneClass — Homework Help (главная лента)"
+  - src: "/screenshots/notesolution/oneclass-homework-help-questions.png"
+    caption: "OneClass — Homework Help со списком вопросов"
+  - src: "/screenshots/notesolution/homework-help-mobile.png"
+    caption: "OneClass — Homework Help (mobile, real-time watchers)"
+  - src: "/screenshots/notesolution/easyke-main.png"
+    caption: "Easyke — китайская версия платформы"
+  - src: "/screenshots/notesolution/photon-landing.png"
+    caption: "Photon SOL — sniping-инструмент для токенов (landing)"
+  - src: "/screenshots/notesolution/photon-trading-table.png"
+    caption: "Photon SOL — Discover: real-time таблица новых пар"
+  - src: "/screenshots/notesolution/photon-monitor.png"
+    caption: "Photon SOL — Monitor: real-time график, transactions, holders"
+  - src: "/screenshots/notesolution/photon-autotrading-tools.png"
+    caption: "Photon SOL — Quick Buy/Sell: авто-аппрув и пакетные продажи"
+  - src: "/screenshots/notesolution/tinyastro-landing.png"
+    caption: "Tiny Astro — NFT-аналитика: Astro Analytics + Astro Marketplace"
+  - src: "/screenshots/notesolution/tinyastro-dashboards.png"
+    caption: "Tiny Astro — дашборды по коллекции: sales, listings, momentum, gas"
+  - src: "/screenshots/notesolution/astro-analytics-tokens.png"
+    caption: "Astro Analytics — genesis-коллекция с пожизненным доступом"
 ---
 
 - Развивал платформу онлайн-образования для вузов Северной Америки и Китая: обмен конспектами, занятия с репетиторами, подготовка к экзаменам, помощь с ДЗ.
