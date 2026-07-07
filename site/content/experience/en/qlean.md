@@ -6,17 +6,21 @@ period:
   present: true
 location: "Moscow"
 order: 1
-aboutShort: "A mobile-first company in the 'household delegation' space: 10+ apps (B2C / B2B) for clients, cleaners, couriers, pickup-point owners, warehouse staff, factory workers and the sales team — tens of thousands of users across 10+ interacting roles."
+aboutShort: "A mobile-first company in the 'household delegation' space: 10+ apps (B2C / B2B) for clients, cleaners, couriers, pickup-point owners, warehouse staff, factory workers and the sales team — tens of thousands of users and more than 10 interacting roles."
 aboutTags:
+  - Bare React-native
   - B2C
   - B2B
   - Mobile-first
-  - Super-app
-  - Backend For Frontend
+  - Modular Superapp
+  - Backend For Fronted
   - Mobile app core
   - High-load
   - Micro Services
   - Micro Frontend
+  - gRPC / gql / REST
+  - Fastlane
+  - Native modules
 highlights:
   - cross-platform in 3 stores
   - Scrum / Trunk-Based Development
@@ -75,25 +79,15 @@ media:
 - Built the mobile release cycle: before I joined, new apps used to take forever to ship.
 - Wrote docs and architectural decisions for every layer of the core and every process (mobile, BFF, release management), defended them in front of the architecture committee — some implemented by me, some by the team.
 - Ran interviews, performance reviews, onboarding.
-- Rebuilt the engineering process so apps compose from reusable modules like Lego bricks — small, independent, loosely coupled; some shared (`authentication`, `devtools`), some app-local (`courierDocuments`). Before the rebuild, logic duplication between apps was around 60–70%.
+- Rebuilt the engineering process so apps compose from reusable modules like Lego bricks — small, independent, loosely coupled; some shared (`authentication`, `devtools`), some app-local (`courierDocuments`). Before the rebuild, logic duplication between apps was around 60–70%; after — single-digit overlap (~15–20%).
 - Owned the P&L of the mobile team and managed technical budgets.
 
 ### Achievements
 
 - App development put on a single track — **a conveyor belt: a small team shipping many apps**.
 - **12 apps** shipped to production (joined when 3 were live).
-- **50+ modules** in the super-app core, reused across apps.
+- **50+ modules** in the super-app core, reused across apps. The module structure is detailed down to the smallest detail, which opened up new automation opportunities.
 - **New mobile project launch time: years → months → weeks**.
 - Cut logic duplication between apps from 60–70% down to single-digit overlap.
-- **~100 technical interviews**.
-
-Example modules from one of the apps:
-
-```
-address, analytics, authentication, broadcast, calls, catalog, cargoHandshake, cargoSelect,
-clipboard, communications, config, containers, courierCargo, courierDocuments, courierOrder,
-courierRefill, courses, dadata, device, devtools, file, form, gates, geoSuggestions, icon,
-legalDocuments, link, location, notification, maps, orientation, payment, paymentProcessor,
-permissions, photoUploader, platform, preferences, productSelect, profile, qrCodeScanner,
-schedule, sentry, storage, story, support, verification, version, warehouseSearch, webPages
-```
+- Introduced AI tooling into mobile processes (creating new modules, automating code review and testing, style unification, automatic documentation). Our modules are specified in detail at every level and templated, so fine-tuned AI agents successfully replace humans on many tasks.
+- **~100 technical interviews**; successful onboarding and training of new hires.

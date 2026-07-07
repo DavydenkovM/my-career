@@ -10,13 +10,24 @@ aboutShort: "Канадский EdTech + Web3 стартап: mobile-first ве�
 aboutTags:
   - EdTech
   - Web3
+  - Blockchain
+  - Real-time trading
+  - International team
   - SSR
   - PWA
   - SPA
   - AMP
-  - SEO
-  - Real-time
-  - Data-driven
+  - SEO optimizations
+  - schema.org / micro-markup
+  - next.js
+  - HighCharts.js
+  - Restream.io
+  - RoR
+  - React / Redux
+  - HotJar
+  - LightHouse scoring
+  - NFT marketplaces
+  - 30-under-30 Forbes (stakeholders)
 highlights:
   - 8+ SPA / AMP / PWA / native приложений
   - SEO-оптимизация и скрин-ридеры

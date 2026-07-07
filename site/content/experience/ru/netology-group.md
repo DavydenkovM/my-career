@@ -10,12 +10,19 @@ aboutShort: "Флагман онлайн-образования в России:
 aboutTags:
   - EdTech
   - CTO
-  - High-load
-  - Migration
-  - Microservices
+  - High-load RoR
+  - Marketing Campaigns
+  - React / Redux SPA
+  - React-Native
+  - Migration to Microservices
   - DevOps
-  - Erlang
+  - Erlang video-streaming
   - PostgreSQL
+  - Code Sandboxes
+  - Encrypted Storages
+  - Multiple Payment Gateways
+  - Multi-tenant apps
+  - ETL
   - Team-leadership
 highlights:
   - "15–20 человек в прямом подчинении"
