@@ -56,6 +56,8 @@ media:
     caption: "Core tests in CI — per-module runs"
   - src: "/screenshots/qlean/mobile-core-test-coverage.png"
     caption: "Core test coverage"
+  - src: "/screenshots/qlean/gitlab-bff-pipelines.png"
+    caption: "GitLab pipelines for the BFF gateways"
   - src: "/screenshots/qlean/qlean-warehouse-entry.png"
     caption: "Warehouse app entry screen"
   - src: "/screenshots/qlean/courier-calls.mp4"

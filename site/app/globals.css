@@ -9,10 +9,16 @@
     --color-border: 215 199 167;    /* warm sand */
     --color-soft: 246 239 226;      /* paper-deep */
     --color-accent: 180 83 9;       /* amber-700 */
+    --sticky-offset: 5rem;          /* sticky header height + breathing room */
   }
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+  }
+  /* Offset anchor scrolling so the sticky header doesn't cover section titles. */
+  :target,
+  [id] {
+    scroll-margin-top: var(--sticky-offset);
   }
   body {
     @apply bg-paper text-ink-900 antialiased;

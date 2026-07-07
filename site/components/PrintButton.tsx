@@ -2,7 +2,12 @@
 
 import { useLang } from "./LangProvider";
 
-export function PrintButton() {
+type Props = {
+  /** Compact = icon-only, no label. */
+  compact?: boolean;
+};
+
+export function PrintButton({ compact = false }: Props) {
   const { t } = useLang();
   return (
     <button
@@ -10,6 +15,7 @@ export function PrintButton() {
       className="btn"
       onClick={() => window.print()}
       title={t("ui.printHint")}
+      aria-label={t("ui.print")}
     >
       <svg
         width="14"
@@ -26,7 +32,7 @@ export function PrintButton() {
         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
         <rect x="6" y="14" width="12" height="8" />
       </svg>
-      <span>{t("ui.print")}</span>
+      {compact ? null : <span>{t("ui.print")}</span>}
     </button>
   );
 }

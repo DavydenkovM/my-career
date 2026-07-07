@@ -56,6 +56,8 @@ media:
     caption: "Тесты ядра в CI — прогоны по модулям"
   - src: "/screenshots/qlean/mobile-core-test-coverage.png"
     caption: "Покрытие ядра тестами"
+  - src: "/screenshots/qlean/gitlab-bff-pipelines.png"
+    caption: "GitLab-пайплайны BFF-шлюзов"
   - src: "/screenshots/qlean/qlean-warehouse-entry.png"
     caption: "Мокап главного экрана Склада"
   - src: "/screenshots/qlean/courier-calls.mp4"

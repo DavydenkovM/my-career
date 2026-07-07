@@ -10,12 +10,23 @@ export type TechBlock = {
   groups: SkillGroup[];
 };
 
+export type Contact = { label: string; value: string; href?: string };
+
 export type SiteContent = {
   meta: {
     name: string;
     title?: string;
     location: string;
     roles?: string[];
+    rolesEn?: string[];
+    photo?: string;
+    fullName?: string;
+    age?: number;
+    family?: string;
+    education?: string[];
+    contactLinks?: Contact[];
+    profileButtons?: { label: string; href: string }[];
+    contacts?: Contact[];
   };
   about: string[];
   competencies: string[];
@@ -24,11 +35,41 @@ export type SiteContent = {
   contacts: { label: string; value: string; href?: string }[];
 };
 
+function ageFromBirth(birth: string, now = new Date()): number {
+  const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(birth);
+  if (!m) return 0;
+  const [, dd, mm, yyyy] = m;
+  let age = now.getFullYear() - Number(yyyy);
+  const beforeBirthday =
+    now.getMonth() + 1 < Number(mm) ||
+    (now.getMonth() + 1 === Number(mm) && now.getDate() < Number(dd));
+  if (beforeBirthday) age -= 1;
+  return age;
+}
+
+const BIRTH = "23.12.1989";
+
 const ru: SiteContent = {
   meta: {
     name: "Михаил Давыденков",
     location: "Москва / удалённо",
     roles: ["Технический директор", "Руководитель мобильной разработки", "Архитектор платформ"],
+    rolesEn: ["CTO", "Head of Mobile", "Platform Architect"],
+    photo: "/photo.jfif",
+    fullName: "Давыденков Михаил Юрьевич",
+    age: ageFromBirth(BIRTH),
+    family: "Женат, двое детей",
+    education: [
+      "МАИ 2011/2012 — программист (специалитет) · ИнЯз (2-е высшее)",
+    ],
+    contactLinks: [
+      { label: "Telegram", value: "@davydenkovm", href: "https://t.me/davydenkovm" },
+      { label: "Email", value: "davydenkov.mihail@gmail.com", href: "mailto:davydenkov.mihail@gmail.com" },
+    ],
+    profileButtons: [
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/mikhail-davydenkov-46508488/" },
+      { label: "GitHub", href: "https://github.com/Davydenkovm" },
+    ],
   },
   about: [
     "Более 15 лет в разработке. Специализируюсь на построении инженерных платформ, масштабировании команд и снижении архитектурной сложности продуктов.",
@@ -107,6 +148,22 @@ const en: SiteContent = {
     name: "Mikhail Davydenkov",
     location: "Moscow / remote",
     roles: ["CTO", "Head of Mobile", "Platform Architect"],
+    rolesEn: ["CTO", "Head of Mobile", "Platform Architect"],
+    photo: "/photo.jfif",
+    fullName: "Mikhail Yurievich Davydenkov",
+    age: ageFromBirth(BIRTH),
+    family: "Married, two children",
+    education: [
+      "MAI 2011/2012 — programmer (specialist) · language dept. (2nd degree)",
+    ],
+    contactLinks: [
+      { label: "Telegram", value: "@davydenkovm", href: "https://t.me/davydenkovm" },
+      { label: "Email", value: "davydenkov.mihail@gmail.com", href: "mailto:davydenkov.mihail@gmail.com" },
+    ],
+    profileButtons: [
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/mikhail-davydenkov-46508488/" },
+      { label: "GitHub", href: "https://github.com/Davydenkovm" },
+    ],
   },
   about: [
     "15+ years in software engineering. I build engineering platforms, scale delivery organizations and reduce architectural complexity of products.",
