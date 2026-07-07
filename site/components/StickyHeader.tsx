@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLang } from "./LangProvider";
 import { getSiteContent } from "@/content/site";
+import { asset } from "@/content/asset";
 import { LangSwitcher } from "./LangSwitcher";
 import { PrintButton } from "./PrintButton";
 
@@ -35,7 +36,7 @@ export function StickyHeader() {
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-2.5 sm:px-8">
           {meta.photo ? (
             <img
-              src={meta.photo}
+              src={asset(meta.photo)}
               alt=""
               width={32}
               height={32}
