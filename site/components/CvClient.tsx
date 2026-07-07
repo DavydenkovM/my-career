@@ -1,0 +1,103 @@
+"use client";
+
+import { useMemo } from "react";
+import { useLang } from "./LangProvider";
+import { getSiteContent } from "@/content/site";
+import { Section } from "./Section";
+import { TechSection } from "./TechSection";
+import { Contacts } from "./Contacts";
+import { AboutSection } from "./AboutSection";
+import { HeaderTitle } from "./HeaderTitle";
+import { LangSwitcher } from "./LangSwitcher";
+import { PrintButton } from "./PrintButton";
+import { Sidebar, type NavGroup } from "./Sidebar";
+import { ExperienceTabs } from "./ExperienceTabs";
+import type { Experience } from "@/content/loader";
+
+function yearRangeLabel(
+  period: Experience["period"],
+  lang: "ru" | "en"
+): string {
+  const ym = /^(\d{4})/.exec(period.from);
+  const fromYear = ym ? Number(ym[1]) : null;
+  const toYear = period.present
+    ? null
+    : period.to
+      ? Number(/^(\d{4})/.exec(period.to)?.[1] ?? "NaN")
+      : null;
+  const presentLabel = lang === "en" ? "now" : "н.в.";
+  if (fromYear && toYear) return `${fromYear}–${toYear}`;
+  if (fromYear && period.present) return `${fromYear}–${presentLabel}`;
+  return `${fromYear ?? toYear ?? ""}`;
+}
+
+export function CvClient({ items }: { items: { ru: Experience[]; en: Experience[] } }) {
+  const { lang, t } = useLang();
+  const list = items[lang];
+
+  const navGroups = useMemo<NavGroup[]>(
+    () => [
+      { id: "about", label: t("ui.about") },
+      {
+        id: "experience",
+        label: t("ui.experience"),
+        children: list.map((item) => ({
+          id: `exp-${item.slug}`,
+          title: item.company,
+          subtitle: yearRangeLabel(item.period, lang),
+        })),
+      },
+      { id: "tech", label: t("ui.tech") },
+      { id: "contacts", label: t("ui.contacts") },
+    ],
+    [t, list, lang]
+  );
+
+  return (
+    <div className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-16 print:max-w-none print:px-0 print:py-0">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <HeaderTitle />
+        <div className="no-print flex flex-wrap items-center gap-2 sm:pt-3">
+          <LangSwitcher />
+          <PrintButton />
+        </div>
+      </div>
+
+      <div className="mt-10 grid grid-cols-1 gap-x-12 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-x-14 print:block">
+        <Sidebar groups={navGroups} />
+
+        <div className="min-w-0 print:max-w-none">
+          <Section id="about" title={t("ui.about")}>
+            <AboutSection />
+          </Section>
+
+          <Section id="experience" title={t("ui.experience")}>
+            <ExperienceTabs items={list} />
+          </Section>
+
+          <Section id="tech" title={t("ui.tech")}>
+            <TechSection />
+          </Section>
+
+          <Section id="contacts" title={t("ui.contacts")}>
+            <Contacts />
+          </Section>
+
+          <footer className="mt-16 flex flex-col items-start gap-2 border-t border-ink-200 pt-5 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between">
+            <span>
+              © {new Date().getFullYear()} · {getSiteContent(lang).meta.name}
+            </span>
+            <a
+              className="link no-print"
+              href="https://github.com/your-handle/your-career-site"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              {t("ui.openSource")} ↗
+            </a>
+          </footer>
+        </div>
+      </div>
+    </div>
+  );
+}
