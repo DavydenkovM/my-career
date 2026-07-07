@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import type { Language } from "./i18n";
+import { asset } from "./asset";
 
 export type ExperienceFrontmatter = {
   company: string;
@@ -62,7 +63,7 @@ export function getExperience(lang: Language): Experience[] {
       aboutShort: fm.aboutShort,
       aboutTags: fm.aboutTags,
       highlights: fm.highlights,
-      media: fm.media,
+      media: fm.media?.map((m) => ({ ...m, src: asset(m.src), poster: m.poster ? asset(m.poster) : undefined })),
     };
   });
   return items.sort((a, b) => (a.order ?? 100) - (b.order ?? 100));

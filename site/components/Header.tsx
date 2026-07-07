@@ -2,6 +2,7 @@
 
 import { useLang } from "./LangProvider";
 import { getSiteContent } from "@/content/site";
+import { asset } from "@/content/asset";
 import { LangSwitcher } from "./LangSwitcher";
 import { PrintButton } from "./PrintButton";
 
@@ -105,7 +106,7 @@ export function Header() {
       <div className="flex shrink-0 flex-col items-start gap-2 sm:gap-3">
         {meta.photo ? (
           <img
-            src={meta.photo}
+            src={asset(meta.photo)}
             alt={meta.name}
             width={128}
             height={128}
