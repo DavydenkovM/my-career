@@ -7,13 +7,18 @@ period:
 order: 2
 aboutShort: "An aerospace enterprise — built a modern engineering process from scratch inside an organization with its own contract-review and certification specifics."
 aboutTags:
+  - Python
+  - DRF / Fast API
   - Aerospace
-  - Process
+  - Process Management
   - Gitflow
+  - Git / submodules
   - CI/CD
-  - Code review
+  - Automated Code review
+  - Automated Docs validation
   - TDD
   - XWIKI
+  - Internal chatbots
 highlights:
   - Gitflow / CI-CD / Code review
   - Red-Green-Refactor
@@ -28,6 +33,7 @@ highlights:
 
 ### Achievements
 
-- Modern engineering process (Gitflow / CI‑CD / Code review / Red‑Green‑Refactor) inside an organization with its own certification specifics.
-- Requirements management system on XWIKI — an IBM DOORS analogue.
-- Mentoring and training of engineers.
+- Trained 10+ engineers in modern software development practices.
+- Replaced IBM DOORS with a self-hosted requirements management system built on XWIKI and extended with Python plugins — an IBM DOORS + Obsidian analogue.
+- Built an automated document validation system: forward and backward traceability links, integrity and consistency checks for requirements, versioning, integrations with diagram engines and the internal ticketing system, plus a DSL-based shortcut system for writing documents without errors.
+- Set up backups, linters and automated pipelines; configured Linux servers and selected hardware for an on-board software testing lab.
