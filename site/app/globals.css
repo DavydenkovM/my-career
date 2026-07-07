@@ -16,10 +16,14 @@
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
   }
-  /* Offset anchor scrolling so the sticky header doesn't cover section titles. */
-  :target,
-  [id] {
-    scroll-margin-top: var(--sticky-offset);
+  /* On desktop, offset anchor scrolling so the sticky header doesn't cover
+     section titles. On mobile, the sticky header is hidden and the floating
+     nav lives at the bottom — so a top offset is unnecessary. */
+  @media (min-width: 640px) {
+    :target,
+    [id] {
+      scroll-margin-top: var(--sticky-offset);
+    }
   }
   /* Give the page a bit of bottom padding on mobile so the FAB doesn't cover the
      last line of the footer. */
