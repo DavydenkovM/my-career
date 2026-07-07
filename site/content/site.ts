@@ -111,55 +111,54 @@ const ru: SiteContent = {
     {
       category: "Mobile",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["React Native", "TypeScript", "Kotlin", "Swift"] },
-        { titleKey: "ui.skillsStrong", items: ["MobX", "Reanimated", "Objective‑C"] },
+        { titleKey: "ui.skillsCore", items: ["React Native", "TypeScript", "Kotlin", "Swift", "MobX", "Expo", "Native & Turbo Modules", "Nitro modules"] },
+        { titleKey: "ui.skillsStrong", items: ["Reanimated", "Java", "Objective‑C"] },
       ],
     },
     {
       category: "Frontend",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["React", "Next.js", "SSR", "PWA"] },
-        { titleKey: "ui.skillsStrong", items: ["AMP", "Electron"] },
+        { titleKey: "ui.skillsCore", items: ["TypeScript", "React", "Next.js", "SSR", "PWA", "Vue.js", "Webpack", "Eslint"] },
+        { titleKey: "ui.skillsStrong", items: ["Vite", "Babel", "AMP", "Electron"] },
       ],
     },
     {
       category: "Backend",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["Node.js", "GoLang", "Python"] },
-        { titleKey: "ui.skillsStrong", items: ["Ruby on Rails", "NestJS", "Erlang/Elixir"] },
+        { titleKey: "ui.skillsCore", items: ["Node.js", "NestJS", "Python", "Ruby", "Sidekiq"] },
+        { titleKey: "ui.skillsStrong", items: ["GoLang", "Erlang/Elixir", "Rust", "C"] },
       ],
     },
     {
       category: "Data layer",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["PostgreSQL", "Redis", "Apache Kafka"] },
-        { titleKey: "ui.skillsStrong", items: ["MySQL", "MongoDB", "RabbitMQ"] },
+        { titleKey: "ui.skillsCore", items: ["PostgreSQL", "Redis", "RabbitMQ"] },
+        { titleKey: "ui.skillsStrong", items: ["MySQL", "MongoDB", "Apache Kafka"] },
       ],
     },
     {
       category: "Infrastructure",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["Docker", "CI/CD", "Kubernetes", "Terraform"] },
+        { titleKey: "ui.skillsCore", items: ["Docker", "CI/CD", "nginx", "Kubernetes", "Terraform"] },
         { titleKey: "ui.skillsStrong", items: ["Ansible", "Vault", "ELK", "Grafana/Prometheus"] },
       ],
     },
     {
       category: "Architecture",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["Microservices", "Modular Monolith", "Backend‑For‑Frontend", "Event‑driven systems"] },
+        { titleKey: "ui.skillsCore", items: ["Microservices", "Modular Monolith", "Backend‑For‑Frontend", "Event‑driven systems", "Git submodules", "Yarn workspaces", "Data denormalization", "Caching"] },
       ],
     },
     {
       category: "Управление",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["Команды до 20 человек", "Найм и перф-ревью", "P&L и бюджеты", "Менторинг", "Процессы с нуля"] },
-        { titleKey: "ui.skillsStrong", items: ["Кросс-функциональные команды", "Архитектурный комитет", "Техно-пятницы / митапы", "Найм на US-рынке"] },
+        { titleKey: "ui.skillsCore", items: ["Команды до 20 человек", "Найм и перф-ревью", "P&L и бюджеты", "Менторинг", "Процессы с нуля", "Scrum", "Lean", "Agile", "Kanban", "Релиз-менеджмент", "PlantUML"] },
       ],
     },
     {
       category: "AI инструменты",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["AI-агенты на базе модулей", "Авто-генерация модулей", "Авто-ревью и тесты", "Авто-документация", "Унификация стилей через AI"] },
+        { titleKey: "ui.skillsCore", items: ["Обучение AI-агентов под задачу", "Авто-генерация модулей", "Авто-ревью и тесты", "Авто-документация", "Унификация стилей через AI", "OpenClaw", "n8n", "OpenRouter", "Китайские модели", "Оптимизация токенов"] },
       ],
     },
   ],
