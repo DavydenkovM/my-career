@@ -36,6 +36,7 @@ export type SiteContent = {
   };
   about: string[];
   competencies: string[];
+  offerings: string[];
   achievements: { text: string; interviews?: number }[];
   techs: TechBlock[];
   contacts: { label: string; value: string; href?: string }[];
@@ -79,10 +80,8 @@ const ru: SiteContent = {
     ],
   },
   about: [
-    "Более 15 лет в разработке. Специализируюсь на построении инженерных платформ, масштабировании команд и снижении архитектурной сложности продуктов.",
-    "За карьеру выстраивал процессы разработки, архитектуру платформ и технические организации в компаниях из сфер EdTech, FinTech, Mobile Services и Aerospace.",
-    "Hands-on архитектор и руководитель инженерных команд: продолжаю участвовать в проектировании и разработке ключевых компонентов системы.",
-    "Управлял несколькими кросс-функциональными командами общей численностью до 20 человек (в прямом подчинении), также руководил отделом мобильной разработки",
+    "Более **17 лет** строю **инженерные платформы** и команды в EdTech, FinTech, LifeStyle Mobile Services и Aerospace. Совмещаю **техническое лидерство** с **практической разработкой**: проектирую архитектуру, пишу **критически важные компоненты**, выстраиваю **инженерные процессы** и развиваю команды.",
+    "Работал в ролях **CTO**, **Head of Mobile** и **Head of Frontend**, руководил **кросс-функциональными командами** до **20 человек**.",
   ],
   competencies: [
     "Platform Architecture",
@@ -92,12 +91,19 @@ const ru: SiteContent = {
     "Technical Leadership",
     "Distributed Systems",
   ],
+  offerings: [
+    "**Запустить новый продукт** — со старта правильно выстроить разработку мобилок, бэка, фронта, инфры. Помочь корректно выбрать **технологический стек**.",
+    "**Навести порядок в процессах** — сделать разработку **прозрачной для бизнеса и клиентов**.",
+    "**Оптимизировать работу команд через внедрение ИИ** на всех уровнях: **обучение моделей** под специфику доменной области, **автоматизация ревью и документации**, **контроль за процессами**.",
+    "**Подтянуть или пересобрать команду** — выстроить **планы обучения**, прокачать **харды**.",
+    "**Оптимизировать инфраструктуру**, выстроить **пайплайны** и **чеклисты** для staging / препрод / продакшн.",
+  ],
   achievements: [
+    { text: "Помог нескольким компаниям выстроить инженерные процессы, позволяющие масштабировать команды и ускорить поставку продукта" },
     { text: "Построил платформу модульной мобильной разработки — на её базе выпущено 12 приложений (десятки тысяч пользователей)" },
+    { text: "Спроектировал и руководил разработкой платёжных систем, образовательных и мобильных платформ с высокими требованиями к надёжности и модульности" },
     { text: "Руководил миграцией образовательной платформы от монолитной архитектуры к микросервисной" },
-    { text: "Выстроил инженерные процессы в нескольких компаниях — от стартапов до крупных продуктовых организаций" },
-    { text: "Руководил разработкой критически важных систем: платежи, образовательные платформы, мобильные экосистемы" },
-    { text: "Провёл более 350 технических интервью", interviews: 350 },
+    { text: "Провёл более 350 технических интервью и участвовал в построении инженерных команд разных уровней — от стартапов до крупных продуктовых компаний", interviews: 350 },
   ],
   techs: [
     {
@@ -187,10 +193,10 @@ const en: SiteContent = {
     ],
   },
   about: [
-    "15+ years in software engineering. I build engineering platforms, scale delivery organizations and reduce architectural complexity of products.",
-    "Throughout my career I have set up engineering processes, platform architecture and technical organizations across EdTech, FinTech, Mobile Services and Aerospace.",
-    "Hands‑on architect and engineering leader: I continue to design and implement the most critical parts of the systems I own.",
-    "I have led cross‑functional teams of up to 20 direct reports and a mobile engineering group of up to 5 direct reports.",
+    "**15+ years** in software engineering. I build **engineering platforms**, **scale delivery organizations** and reduce **architectural complexity** of products.",
+    "Throughout my career I have set up **engineering processes**, **platform architecture** and **technical organizations** across EdTech, FinTech, Mobile Services and Aerospace.",
+    "Hands‑on architect and **engineering leader**: I continue to **design and implement** the most critical parts of the systems I own.",
+    "I have led **cross‑functional teams** of up to **20 direct reports** and a mobile engineering group of up to **5 direct reports**.",
   ],
   competencies: [
     "Platform Architecture",
@@ -199,6 +205,13 @@ const en: SiteContent = {
     "Product Engineering",
     "Technical Leadership",
     "Distributed Systems",
+  ],
+  offerings: [
+    "**Launch a new product** — set up mobile, backend, frontend and infrastructure from day one. Help pick the **right technology stack**.",
+    "**Bring order to engineering processes** — make development **transparent to the business and to customers**.",
+    "**Optimize team workflows with AI** at every level: **training models** on domain-specific data, **automating code review and documentation**, **monitoring processes**.",
+    "**Level up or rebuild the team** — define **growth plans** and sharpen **hard skills**.",
+    "**Optimize infrastructure**, build **CI/CD pipelines** and **checklists** for staging / pre-prod / production.",
   ],
   achievements: [
     { text: "Built a modular mobile development platform that powers 12 released apps (tens of thousands of users)" },

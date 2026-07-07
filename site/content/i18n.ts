@@ -7,7 +7,8 @@ type LabelValue = string | string[];
 export const labels: Record<Language, Record<string, LabelValue>> = {
   ru: {
     "ui.about": "О себе",
-    "ui.competencies": "Ключевые компетенции",
+    "ui.specialization": "Специализация",
+    "ui.offerings": "Чем я могу быть полезен",
     "ui.achievements": "Ключевые достижения",
     "ui.fullName": "ФИО",
     "ui.family": "Возраст / Семья",
@@ -44,7 +45,8 @@ export const labels: Record<Language, Record<string, LabelValue>> = {
   },
   en: {
     "ui.about": "About",
-    "ui.competencies": "Core competencies",
+    "ui.specialization": "Specialization",
+    "ui.offerings": "How I can help",
     "ui.achievements": "Key achievements",
     "ui.fullName": "Full name",
     "ui.family": "Age / Family",
