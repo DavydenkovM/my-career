@@ -12,6 +12,12 @@ export type TechBlock = {
 
 export type Contact = { label: string; value: string; href?: string };
 
+export type ProfileButton = {
+  label: string;
+  href: string;
+  iconSrc?: string;
+};
+
 export type SiteContent = {
   meta: {
     name: string;
@@ -25,7 +31,7 @@ export type SiteContent = {
     family?: string;
     education?: string[];
     contactLinks?: Contact[];
-    profileButtons?: { label: string; href: string }[];
+    profileButtons?: ProfileButton[];
     contacts?: Contact[];
   };
   about: string[];
@@ -69,6 +75,7 @@ const ru: SiteContent = {
     profileButtons: [
       { label: "LinkedIn", href: "https://www.linkedin.com/in/mikhail-davydenkov-46508488/" },
       { label: "GitHub", href: "https://github.com/Davydenkovm" },
+      { label: "AI", href: "https://clawhub.ai/DavydenkovM" },
     ],
   },
   about: [
@@ -134,6 +141,19 @@ const ru: SiteContent = {
         { titleKey: "ui.skillsCore", items: ["Microservices", "Modular Monolith", "Backend‑For‑Frontend", "Event‑driven systems"] },
       ],
     },
+    {
+      category: "Управление",
+      groups: [
+        { titleKey: "ui.skillsCore", items: ["Команды до 20 человек", "Найм и перф-ревью", "P&L и бюджеты", "Менторинг", "Процессы с нуля"] },
+        { titleKey: "ui.skillsStrong", items: ["Кросс-функциональные команды", "Архитектурный комитет", "Техно-пятницы / митапы", "Найм на US-рынке"] },
+      ],
+    },
+    {
+      category: "AI инструменты",
+      groups: [
+        { titleKey: "ui.skillsCore", items: ["AI-агенты на базе модулей", "Авто-генерация модулей", "Авто-ревью и тесты", "Авто-документация", "Унификация стилей через AI"] },
+      ],
+    },
   ],
   contacts: [
     { label: "Email", value: "you@example.com", href: "mailto:you@example.com" },
@@ -163,6 +183,7 @@ const en: SiteContent = {
     profileButtons: [
       { label: "LinkedIn", href: "https://www.linkedin.com/in/mikhail-davydenkov-46508488/" },
       { label: "GitHub", href: "https://github.com/Davydenkovm" },
+      { label: "AI", href: "https://clawhub.ai/DavydenkovM" },
     ],
   },
   about: [
@@ -226,6 +247,19 @@ const en: SiteContent = {
       category: "Architecture",
       groups: [
         { titleKey: "ui.skillsCore", items: ["Microservices", "Modular Monolith", "Backend‑For‑Frontend", "Event‑driven systems"] },
+      ],
+    },
+    {
+      category: "Management",
+      groups: [
+        { titleKey: "ui.skillsCore", items: ["Teams up to 20", "Hiring & perf reviews", "P&L and budgets", "Mentoring", "Building process from scratch"] },
+        { titleKey: "ui.skillsStrong", items: ["Cross-functional teams", "Architecture committee", "Tech Fridays / meetups", "Hiring on the US market"] },
+      ],
+    },
+    {
+      category: "AI tooling",
+      groups: [
+        { titleKey: "ui.skillsCore", items: ["AI agents on top of modules", "Auto-generation of modules", "Auto review & tests", "Auto documentation", "Style unification via AI"] },
       ],
     },
   ],

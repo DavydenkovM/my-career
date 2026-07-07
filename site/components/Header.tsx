@@ -33,6 +33,50 @@ function GitHubIcon() {
   );
 }
 
+function GlobeIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M2 12h20" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  );
+}
+
+function AiIcon() {
+  return (
+    <span
+      aria-hidden="true"
+      className="font-mono text-[10px] font-bold leading-none tracking-tight text-current"
+    >
+      AI
+    </span>
+  );
+}
+
+function getProfileIcon(label: string) {
+  switch (label) {
+    case "LinkedIn":
+      return LinkedInIcon;
+    case "GitHub":
+      return GitHubIcon;
+    case "AI":
+      return AiIcon;
+    default:
+      return GlobeIcon;
+  }
+}
+
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col">
@@ -76,8 +120,7 @@ export function Header() {
           {meta.profileButtons && meta.profileButtons.length > 0 ? (
             <div className="flex flex-row items-center gap-1.5">
               {meta.profileButtons.map((b) => {
-                const Icon =
-                  b.label === "LinkedIn" ? LinkedInIcon : GitHubIcon;
+                const Icon = getProfileIcon(b.label);
                 return (
                   <a
                     key={b.label}
@@ -86,15 +129,14 @@ export function Header() {
                     rel="noreferrer noopener"
                     aria-label={b.label}
                     title={b.label}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-ink-200 bg-white text-ink-700 shadow-sm transition hover:border-accent hover:text-accent"
+                    className="inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-ink-200 bg-white text-ink-700 shadow-sm transition hover:border-accent hover:text-accent"
                   >
-                    <Icon />
+                    {Icon ? <Icon /> : null}
                   </a>
                 );
               })}
             </div>
-          ) : null}
-        </div>
+          ) : null}        </div>
       </div>
 
       <div className="min-w-0 flex-1">
