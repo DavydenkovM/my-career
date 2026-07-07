@@ -117,33 +117,7 @@ export function Sidebar({ groups }: Props) {
         </nav>
       </aside>
 
-      {/* Mobile: horizontal scrolling nav strip */}
-      <div className="no-print -mx-5 mb-6 overflow-x-auto border-b border-ink-200 px-5 sm:hidden">
-        <nav aria-label={t("ui.nav")}>
-          <ul className="flex gap-1 whitespace-nowrap py-2">
-            {groups.map((g) => {
-              const isActive =
-                active === g.id || (g.children?.some((c) => c.id === active) ?? false);
-              return (
-                <li key={g.id}>
-                  <a
-                    href={`#${g.id}`}
-                    aria-current={active === g.id ? "true" : undefined}
-                    className={[
-                      "inline-block rounded-full px-3 py-1 text-xs font-semibold transition",
-                      isActive
-                        ? "bg-accent text-white"
-                        : "text-ink-600 hover:bg-ink-100",
-                    ].join(" ")}
-                  >
-                    {g.label}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      </div>
+      {/* Mobile: see <MobileNav /> rendered in CvClient */}
     </>
   );
 }

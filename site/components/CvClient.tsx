@@ -9,6 +9,7 @@ import { AboutSection } from "./AboutSection";
 import { Header } from "./Header";
 import { StickyHeader } from "./StickyHeader";
 import { Sidebar, type NavGroup } from "./Sidebar";
+import { MobileNav } from "./MobileNav";
 import { ExperienceTabs } from "./ExperienceTabs";
 import type { Experience } from "@/content/loader";
 
@@ -53,9 +54,8 @@ export function CvClient({ items }: { items: { ru: Experience[]; en: Experience[
   return (
     <>
       <StickyHeader />
-      <div className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-16 print:max-w-none print:px-0 print:py-0">
+      <div id="top" className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-16 print:max-w-none print:px-0 print:py-0">
         <Header />
-
         <div className="mt-10 grid grid-cols-1 gap-x-12 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-x-14 print:block">
           <Sidebar groups={navGroups} />
 
@@ -88,6 +88,7 @@ export function CvClient({ items }: { items: { ru: Experience[]; en: Experience[
           </div>
         </div>
       </div>
+      <MobileNav groups={navGroups} />
     </>
   );
 }
