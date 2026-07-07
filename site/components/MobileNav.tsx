@@ -33,16 +33,22 @@ export function MobileNav({ groups }: Props) {
   return (
     <details
       ref={detailsRef}
-      className="summary-chevron no-print fixed inset-x-4 bottom-4 z-30 sm:hidden"
+      className="mobile-burger no-print fixed bottom-4 right-4 z-30 sm:hidden"
     >
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 rounded-full border border-ink-200 bg-paper px-4 py-2.5 text-sm font-semibold text-ink-900 shadow-[0_8px_24px_-12px_rgba(20,12,4,0.35)]">
-        <span aria-hidden>☰</span>
-        <span>{t("ui.nav")}</span>
-        <span aria-hidden className="text-ink-400">⌃</span>
+      <summary
+        aria-label={t("ui.nav")}
+        title={t("ui.nav")}
+        className="flex h-12 w-12 cursor-pointer list-none items-center justify-center rounded-full border border-ink-200 bg-paper text-ink-900 shadow-[0_8px_24px_-12px_rgba(20,12,4,0.4)]"
+      >
+        <span className="burger" aria-hidden>
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
       </summary>
       <nav
         aria-label={t("ui.nav")}
-        className="mt-2 max-h-[70vh] overflow-y-auto rounded-2xl border border-ink-200 bg-paper/95 p-3 shadow-[0_8px_24px_-12px_rgba(20,12,4,0.45)] backdrop-blur supports-[backdrop-filter]:bg-paper/80"
+        className="absolute bottom-14 right-0 w-72 max-w-[calc(100vw-2rem)] max-h-[70vh] overflow-y-auto rounded-2xl border border-ink-200 bg-paper/95 p-3 shadow-[0_8px_24px_-12px_rgba(20,12,4,0.45)] backdrop-blur supports-[backdrop-filter]:bg-paper/80"
       >
         <ul className="flex flex-col">
           {groups.map((g) => (

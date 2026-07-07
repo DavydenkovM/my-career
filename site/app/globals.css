@@ -10,6 +10,7 @@
     --color-soft: 246 239 226;      /* paper-deep */
     --color-accent: 180 83 9;       /* amber-700 */
     --sticky-offset: 5rem;          /* sticky header height + breathing room */
+    --bottom-fab-offset: 4.5rem;    /* space for the floating mobile nav */
   }
   html {
     -webkit-text-size-adjust: 100%;
@@ -19,6 +20,13 @@
   :target,
   [id] {
     scroll-margin-top: var(--sticky-offset);
+  }
+  /* Give the page a bit of bottom padding on mobile so the FAB doesn't cover the
+     last line of the footer. */
+  @media (max-width: 639px) {
+    body {
+      padding-bottom: var(--bottom-fab-offset);
+    }
   }
   body {
     @apply bg-paper text-ink-900 antialiased;
@@ -127,6 +135,41 @@
   }
   .summary-chevron[open] > summary::after {
     transform: rotate(-135deg) translate(0, 0);
+  }
+  .mobile-burger > summary::-webkit-details-marker {
+    display: none;
+  }
+  .mobile-burger > summary::marker {
+    display: none;
+  }
+  .mobile-burger .burger {
+    position: relative;
+    display: block;
+    width: 18px;
+    height: 14px;
+  }
+  .mobile-burger .burger span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform 0.18s ease, opacity 0.18s ease, top 0.18s ease;
+  }
+  .mobile-burger .burger span:nth-child(1) { top: 0; }
+  .mobile-burger .burger span:nth-child(2) { top: 6px; }
+  .mobile-burger .burger span:nth-child(3) { top: 12px; }
+  .mobile-burger[open] .burger span:nth-child(1) {
+    top: 6px;
+    transform: rotate(45deg);
+  }
+  .mobile-burger[open] .burger span:nth-child(2) {
+    opacity: 0;
+  }
+  .mobile-burger[open] .burger span:nth-child(3) {
+    top: 6px;
+    transform: rotate(-45deg);
   }
   .btn {
     @apply inline-flex items-center gap-1.5 rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm font-semibold text-ink-800 shadow-sm transition hover:border-accent hover:text-accent active:scale-[0.98];
