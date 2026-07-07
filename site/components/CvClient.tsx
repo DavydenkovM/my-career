@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useLang } from "./LangProvider";
 import { getSiteContent } from "@/content/site";
 import { Section } from "./Section";
@@ -51,13 +51,53 @@ export function CvClient({ items }: { items: { ru: Experience[]; en: Experience[
     [t, list, lang]
   );
 
+  const onItemClick = useCallback(
+    (id: string) => {
+      const scrollToTarget = (targetId: string) => {
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        const isDesktop = window.matchMedia("(min-width: 640px)").matches;
+        const cssOffset = parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue("--sticky-offset"),
+        );
+        const measured =
+          document.querySelector<HTMLElement>("[data-sticky-header]")?.offsetHeight ?? 0;
+        const offset = isDesktop ? Math.max(cssOffset || 0, measured) : 0;
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: "smooth" });
+      };
+
+      if (id.startsWith("exp-")) {
+        const slug = id.slice(4);
+        const newHash = `#exp-${slug}`;
+        if (window.location.hash !== newHash) {
+          window.history.replaceState(null, "", newHash);
+        }
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const el = document.getElementById(`exp-${slug}`);
+            if (el) {
+              scrollToTarget(`exp-${slug}`);
+            } else {
+              scrollToTarget("experience");
+            }
+          });
+        });
+      } else {
+        scrollToTarget(id);
+      }
+    },
+    [],
+  );
+
   return (
     <>
       <StickyHeader />
       <div id="top" className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-16 print:max-w-none print:px-0 print:py-0">
         <Header />
         <div className="mt-10 grid grid-cols-1 gap-x-12 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-x-14 print:block">
-          <Sidebar groups={navGroups} />
+          <Sidebar groups={navGroups} onItemClick={onItemClick} />
 
           <div className="min-w-0 print:max-w-none">
             <Section id="about" title={t("ui.about")}>
@@ -88,7 +128,7 @@ export function CvClient({ items }: { items: { ru: Experience[]; en: Experience[
           </div>
         </div>
       </div>
-      <MobileNav groups={navGroups} />
+      <MobileNav groups={navGroups} onItemClick={onItemClick} />
     </>
   );
 }

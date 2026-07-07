@@ -6,9 +6,10 @@ import type { NavGroup } from "./Sidebar";
 
 type Props = {
   groups: NavGroup[];
+  onItemClick?: (id: string) => void;
 };
 
-export function MobileNav({ groups }: Props) {
+export function MobileNav({ groups, onItemClick }: Props) {
   const { t } = useLang();
   const detailsRef = useRef<HTMLDetailsElement>(null);
 
@@ -55,7 +56,13 @@ export function MobileNav({ groups }: Props) {
             <li key={g.id}>
               <a
                 href={`#${g.id}`}
-                onClick={closeMenu}
+                onClick={(e) => {
+                  closeMenu();
+                  if (onItemClick) {
+                    e.preventDefault();
+                    onItemClick(g.id);
+                  }
+                }}
                 className="block rounded-lg px-3 py-2 text-sm font-semibold text-ink-900 hover:bg-ink-100"
               >
                 {g.label}
@@ -66,7 +73,13 @@ export function MobileNav({ groups }: Props) {
                     <li key={c.id}>
                       <a
                         href={`#${c.id}`}
-                        onClick={closeMenu}
+                        onClick={(e) => {
+                          closeMenu();
+                          if (onItemClick) {
+                            e.preventDefault();
+                            onItemClick(c.id);
+                          }
+                        }}
                         className="flex items-baseline gap-2 rounded-md px-2 py-1.5 text-xs text-ink-600 hover:bg-ink-100 hover:text-ink-900"
                       >
                         {c.subtitle ? (

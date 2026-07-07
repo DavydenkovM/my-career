@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLang } from "./LangProvider";
 
 export type NavItem = { id: string; title: string; subtitle?: string };
@@ -12,44 +12,22 @@ export type NavGroup = {
 
 type Props = {
   groups: NavGroup[];
+  onItemClick?: (id: string) => void;
 };
 
-export function Sidebar({ groups }: Props) {
+export function Sidebar({ groups, onItemClick }: Props) {
   const { t } = useLang();
   const [active, setActive] = useState<string>(groups[0]?.id ?? "");
 
-  useEffect(() => {
-    const allIds = groups.flatMap((g) => [g.id, ...(g.children?.map((c) => c.id) ?? [])]);
-    const observed = allIds
-      .map((i) => document.getElementById(i))
-      .filter((el): el is HTMLElement => el !== null);
-    if (observed.length === 0) return;
-
-    const visibility = new Map<string, number>();
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          visibility.set(entry.target.id, entry.intersectionRatio);
-        }
-        let bestId = observed[0].id;
-        let bestRatio = -1;
-        for (const el of observed) {
-          const r = visibility.get(el.id) ?? 0;
-          if (r > bestRatio) {
-            bestRatio = r;
-            bestId = el.id;
-          }
-        }
-        if (bestRatio > 0) setActive(bestId);
-      },
-      {
-        rootMargin: "-30% 0px -55% 0px",
-        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
-      }
-    );
-    observed.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [groups]);
+  const handleClick = (id: string) => (e: React.MouseEvent) => {
+    if (onItemClick) {
+      e.preventDefault();
+      setActive(id);
+      onItemClick(id);
+    } else {
+      setActive(id);
+    }
+  };
 
   return (
     <>
@@ -66,6 +44,7 @@ export function Sidebar({ groups }: Props) {
                   <a
                     href={`#${g.id}`}
                     aria-current={active === g.id ? "true" : undefined}
+                    onClick={handleClick(g.id)}
                     className={[
                       "block border-l-2 py-1.5 pl-3 pr-2 text-sm font-semibold transition",
                       isActive
@@ -84,6 +63,7 @@ export function Sidebar({ groups }: Props) {
                             <a
                               href={`#${c.id}`}
                               aria-current={childActive ? "true" : undefined}
+                              onClick={handleClick(c.id)}
                               className={[
                                 "block border-l-2 py-1 pl-6 pr-2 transition",
                                 childActive

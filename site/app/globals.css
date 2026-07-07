@@ -9,7 +9,7 @@
     --color-border: 215 199 167;    /* warm sand */
     --color-soft: 246 239 226;      /* paper-deep */
     --color-accent: 180 83 9;       /* amber-700 */
-    --sticky-offset: 5rem;          /* sticky header height + breathing room */
+    --sticky-offset: 4rem;          /* sticky header height (~56px) + breathing room */
     --bottom-fab-offset: 4.5rem;    /* space for the floating mobile nav */
   }
   html {
