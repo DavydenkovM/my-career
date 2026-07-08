@@ -206,6 +206,8 @@ const en: SiteContent = {
     "Product Engineering",
     "Technical Leadership",
     "Distributed Systems",
+    "AI-driven development",
+    "Fast TDD / BDD",
   ],
   offerings: [
     "**Launch a new product** — set up mobile, backend, frontend and infrastructure from day one. Help pick the **right technology stack**.",
@@ -225,55 +227,54 @@ const en: SiteContent = {
     {
       category: "Mobile",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["React Native", "TypeScript", "Kotlin", "Swift"] },
-        { titleKey: "ui.skillsStrong", items: ["MobX", "Reanimated", "Objective‑C"] },
+        { titleKey: "ui.skillsCore", items: ["React Native", "TypeScript", "Kotlin", "Swift", "MobX", "Expo", "Native & Turbo Modules", "Nitro modules"] },
+        { titleKey: "ui.skillsStrong", items: ["Reanimated", "Java", "Objective‑C"] },
       ],
     },
     {
       category: "Frontend",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["React", "Next.js", "SSR", "PWA"] },
-        { titleKey: "ui.skillsStrong", items: ["AMP", "Electron"] },
+        { titleKey: "ui.skillsCore", items: ["TypeScript", "React", "Next.js", "SSR", "PWA", "Vue.js", "Webpack", "Eslint"] },
+        { titleKey: "ui.skillsStrong", items: ["Vite", "Babel", "AMP", "Electron"] },
       ],
     },
     {
       category: "Backend",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["Node.js", "GoLang", "Python"] },
-        { titleKey: "ui.skillsStrong", items: ["Ruby on Rails", "NestJS", "Erlang/Elixir"] },
+        { titleKey: "ui.skillsCore", items: ["Node.js", "NestJS", "Python", "Ruby", "Sidekiq"] },
+        { titleKey: "ui.skillsStrong", items: ["GoLang", "Erlang/Elixir", "Rust", "C"] },
       ],
     },
     {
       category: "Data layer",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["PostgreSQL", "Redis", "Apache Kafka"] },
-        { titleKey: "ui.skillsStrong", items: ["MySQL", "MongoDB", "RabbitMQ"] },
+        { titleKey: "ui.skillsCore", items: ["PostgreSQL", "Redis", "RabbitMQ"] },
+        { titleKey: "ui.skillsStrong", items: ["MySQL", "MongoDB", "Apache Kafka"] },
       ],
     },
     {
       category: "Infrastructure",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["Docker", "CI/CD", "Kubernetes", "Terraform"] },
+        { titleKey: "ui.skillsCore", items: ["Docker", "CI/CD", "nginx", "Kubernetes", "Terraform"] },
         { titleKey: "ui.skillsStrong", items: ["Ansible", "Vault", "ELK", "Grafana/Prometheus"] },
       ],
     },
     {
       category: "Architecture",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["Microservices", "Modular Monolith", "Backend‑For‑Frontend", "Event‑driven systems"] },
+        { titleKey: "ui.skillsCore", items: ["Microservices", "Modular Monolith", "Backend‑For‑Frontend", "Event‑driven systems", "Git submodules", "Yarn workspaces", "Data denormalization", "Caching"] },
       ],
     },
     {
       category: "Management",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["Teams up to 20", "Hiring & perf reviews", "P&L and budgets", "Mentoring", "Building process from scratch"] },
-        { titleKey: "ui.skillsStrong", items: ["Cross-functional teams", "Architecture committee", "Tech Fridays / meetups", "Hiring on the US market"] },
+        { titleKey: "ui.skillsCore", items: ["Teams up to 20", "Hiring & perf reviews", "P&L and budgets", "Mentoring", "Building process from scratch", "Scrum", "Lean", "Agile", "Kanban", "Release management", "PlantUML"] },
       ],
     },
     {
       category: "AI tooling",
       groups: [
-        { titleKey: "ui.skillsCore", items: ["AI agents on top of modules", "Auto-generation of modules", "Auto review & tests", "Auto documentation", "Style unification via AI"] },
+        { titleKey: "ui.skillsCore", items: ["Training AI agents for the task", "Auto-generation of modules", "Auto review & tests", "Auto documentation", "Style unification via AI", "OpenClaw", "n8n", "OpenRouter", "Chinese models", "Token optimization"] },
       ],
     },
   ],
