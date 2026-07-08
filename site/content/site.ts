@@ -194,10 +194,8 @@ const en: SiteContent = {
     ],
   },
   about: [
-    "**15+ years** in software engineering. I build **engineering platforms**, **scale delivery organizations** and reduce **architectural complexity** of products.",
-    "Throughout my career I have set up **engineering processes**, **platform architecture** and **technical organizations** across EdTech, FinTech, Mobile Services and Aerospace.",
-    "Hands‑on architect and **engineering leader**: I continue to **design and implement** the most critical parts of the systems I own.",
-    "I have led **cross‑functional teams** of up to **20 direct reports** and a mobile engineering group of up to **5 direct reports**.",
+    "**17+ years** building **engineering platforms** and teams across EdTech, FinTech, LifeStyle Mobile Services and Aerospace. I combine **technical leadership** with **hands‑on development**: I design architecture, write **mission‑critical components**, set up **engineering processes** and grow teams.",
+    "I have held **CTO**, **Head of Mobile** and **Head of Frontend** roles, leading **cross‑functional teams** of up to **20 people**.",
   ],
   competencies: [
     "Platform Architecture",
