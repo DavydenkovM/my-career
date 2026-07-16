@@ -47,6 +47,13 @@ media:
     caption: "Foxford — product menu (mobile)"
   - src: "/screenshots/netology-group/foxford-school.png"
     caption: "Foxford — Home School (mobile)"
+attachments:
+  - title: "Performance Review by Paul Repin, CPO"
+    subtitle: "Netology-group · 2017"
+    description: "Annual performance review from the product CPO (Paul Repin) — assessment of the CTO role, the team and personal contribution for the previous period."
+    href: "/documents/netology-group/perf-review-2017.pdf"
+    preview: "/documents/netology-group/perf-review-2017-preview.png"
+    size: "577 KB"
 ---
 
 - Joined as a senior backend engineer (Rails stack), grew into team lead, architect, then CTO.

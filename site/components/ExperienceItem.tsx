@@ -4,6 +4,7 @@ import type { Experience } from "@/content/loader";
 import { Period } from "./Period";
 import { Tag } from "./Tag";
 import { MediaGallery } from "./MediaGallery";
+import { Attachments } from "./Attachments";
 import { useLang } from "./LangProvider";
 
 type Props = {
@@ -66,6 +67,13 @@ export function ExperienceItem({ item }: Props) {
               <Tag key={hl} label={hl} size="sm" />
             ))}
           </div>
+        </div>
+      ) : null}
+
+      {item.attachments && item.attachments.length > 0 ? (
+        <div className="mt-6">
+          <div className="h-section mb-3">{t("ui.recommendations")}</div>
+          <Attachments items={item.attachments} />
         </div>
       ) : null}
 

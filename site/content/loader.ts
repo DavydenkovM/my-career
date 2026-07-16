@@ -15,6 +15,8 @@ export type ExperienceFrontmatter = {
   aboutTags?: string[];
   highlights?: string[];
   media?: MediaItem[];
+  /** Recommendation letter, performance review, or other document. */
+  attachments?: AttachmentItem[];
 };
 
 export type MediaItem = {
@@ -27,6 +29,21 @@ export type MediaItem = {
   caption?: string;
   /** Optional alt / title for the asset. */
   alt?: string;
+};
+
+export type AttachmentItem = {
+  /** URL to the attached document (PDF, etc.). */
+  href: string;
+  /** Inline preview image shown next to the attachment. */
+  preview?: string;
+  /** Title rendered above the link. */
+  title: string;
+  /** Optional subtitle (issuer / year / etc.). */
+  subtitle?: string;
+  /** Optional caption / description text. */
+  description?: string;
+  /** Optional file size label (e.g. "577 KB"). */
+  size?: string;
 };
 
 export type Experience = ExperienceFrontmatter & {
@@ -63,7 +80,16 @@ export function getExperience(lang: Language): Experience[] {
       aboutShort: fm.aboutShort,
       aboutTags: fm.aboutTags,
       highlights: fm.highlights,
-      media: fm.media?.map((m) => ({ ...m, src: asset(m.src), poster: m.poster ? asset(m.poster) : undefined })),
+      media: fm.media?.map((m) => ({
+        ...m,
+        src: asset(m.src),
+        poster: m.poster ? asset(m.poster) : undefined,
+      })),
+      attachments: fm.attachments?.map((a) => ({
+        ...a,
+        href: asset(a.href),
+        preview: a.preview ? asset(a.preview) : undefined,
+      })),
     };
   });
   return items.sort((a, b) => (a.order ?? 100) - (b.order ?? 100));

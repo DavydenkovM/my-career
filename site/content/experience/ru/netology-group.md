@@ -47,6 +47,13 @@ media:
     caption: "Фоксфорд — меню продуктов (mobile)"
   - src: "/screenshots/netology-group/foxford-school.png"
     caption: "Фоксфорд — Домашняя школа (mobile)"
+attachments:
+  - title: "Performance Review by Paul Repin, CPO"
+    subtitle: "Нетология-групп · 2017"
+    description: "Ежегодный перфоманс-ревью от CPO продукта (Paul Repin) — оценка работы CTO-роли, команды и личного вклада за предыдущий период."
+    href: "/documents/netology-group/perf-review-2017.pdf"
+    preview: "/documents/netology-group/perf-review-2017-preview.png"
+    size: "577 KB"
 ---
 
 - Пришёл в компанию ведущим разработчиком (бэкенд, Rails-стек), вырос в тимлида, архитектора, CTO.
