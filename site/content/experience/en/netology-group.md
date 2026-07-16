@@ -32,6 +32,21 @@ highlights:
   - "DevOps culture (Ansible, docker-compose)"
   - "Azure → Google Cloud + self-hosted"
   - "mission-critical: payments, monitoring, course engine"
+media:
+  - src: "/screenshots/netology-group/netology-main.png"
+    caption: "Netology — home (mobile)"
+  - src: "/screenshots/netology-group/netology-products.png"
+    caption: "Netology — course catalog by topic"
+  - src: "/screenshots/netology-group/netology-profession.png"
+    caption: "Netology — profession landing (mobile)"
+  - src: "/screenshots/netology-group/netology-profession-android.png"
+    caption: "Netology — Android developer profession (mobile)"
+  - src: "/screenshots/netology-group/foxford-main.png"
+    caption: "Foxford — online school home (mobile)"
+  - src: "/screenshots/netology-group/foxford-products.png"
+    caption: "Foxford — product menu (mobile)"
+  - src: "/screenshots/netology-group/foxford-school.png"
+    caption: "Foxford — Home School (mobile)"
 ---
 
 - Joined as a senior backend engineer (Rails stack), grew into team lead, architect, then CTO.

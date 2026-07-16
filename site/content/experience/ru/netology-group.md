@@ -32,6 +32,21 @@ highlights:
   - "DevOps-культура (Ansible, docker-compose)"
   - "Azure → Google Cloud + self-hosted"
   - "критичный для бизнеса код: оплаты, мониторинг, движок курсов"
+media:
+  - src: "/screenshots/netology-group/netology-main.png"
+    caption: "Нетология — главная (mobile)"
+  - src: "/screenshots/netology-group/netology-products.png"
+    caption: "Нетология — каталог курсов по направлениям"
+  - src: "/screenshots/netology-group/netology-profession.png"
+    caption: "Нетология — карточка профессии (mobile)"
+  - src: "/screenshots/netology-group/netology-profession-android.png"
+    caption: "Нетология — профессия Android-разработчик (mobile)"
+  - src: "/screenshots/netology-group/foxford-main.png"
+    caption: "Фоксфорд — главная онлайн-школы (mobile)"
+  - src: "/screenshots/netology-group/foxford-products.png"
+    caption: "Фоксфорд — меню продуктов (mobile)"
+  - src: "/screenshots/netology-group/foxford-school.png"
+    caption: "Фоксфорд — Домашняя школа (mobile)"
 ---
 
 - Пришёл в компанию ведущим разработчиком (бэкенд, Rails-стек), вырос в тимлида, архитектора, CTO.
