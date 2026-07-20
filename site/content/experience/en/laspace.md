@@ -33,7 +33,7 @@ highlights:
 
 ### Achievements
 
-- Trained 10+ engineers in modern software development practices.
+- Trained multiple departments in modern software development practices (30+ engineers upskilled to a new process).
 - Replaced IBM DOORS with a self-hosted requirements management system built on XWIKI and extended with Python plugins — an IBM DOORS + Obsidian analogue.
 - Built an automated document validation system: forward and backward traceability links, integrity and consistency checks for requirements, versioning, integrations with diagram engines and the internal ticketing system, plus a DSL-based shortcut system for writing documents without errors.
 - Set up backups, linters and automated pipelines; configured Linux servers and selected hardware for an on-board software testing lab.
