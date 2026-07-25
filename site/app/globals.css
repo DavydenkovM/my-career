@@ -115,6 +115,7 @@
   .prose-cv blockquote {
     @apply border-l-4 border-accent pl-3 italic text-ink-700;
   }
+
   .summary-chevron > summary {
     list-style: none;
     display: flex;

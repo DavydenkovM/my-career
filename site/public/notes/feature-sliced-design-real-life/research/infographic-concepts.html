@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>FSD: The Promise</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #181b22;
+    --ink: #e6e9ef;
+    --muted: #8a93a3;
+    --accent: #7c5cff;
+    --accent2: #00d4a8;
+    --warn: #ffb454;
+    --danger: #ff5c7c;
+    --border: #262b36;
+    --grid: #1f232d;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage {
+    width: 1600px;
+    min-height: 1200px;
+    margin: 0 auto;
+    padding: 48px 56px 64px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 28px;
+  }
+  header.top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 18px;
+  }
+  header.top h1 {
+    margin: 0;
+    font-size: 44px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  header.top h1 span { color: var(--accent); }
+  header.top p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 540px;
+    text-align: right;
+    line-height: 1.4;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 28px;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    position: relative;
+  }
+  .panel h2 {
+    margin: 0 0 6px 0;
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .panel .sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+
+  /* Pyramid */
+  .pyramid-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .layer {
+    display: grid;
+    grid-template-columns: 130px 1fr 220px;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(124,92,255,0.06), rgba(124,92,255,0));
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .layer.top {
+    background: linear-gradient(180deg, rgba(255,92,124,0.10), rgba(255,92,124,0.02));
+    border-color: rgba(255,92,124,0.4);
+  }
+  .layer .name {
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .layer .desc {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .layer .allowed {
+    font-size: 11px;
+    color: var(--accent2);
+    text-align: right;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .layer .badge-mini {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(124,92,255,0.12);
+    color: var(--accent);
+    font-size: 11px;
+    margin-right: 4px;
+    border: 1px solid rgba(124,92,255,0.25);
+  }
+
+  .arrow {
+    text-align: center;
+    color: var(--accent2);
+    font-size: 18px;
+    line-height: 0.6;
+    padding: 2px 0;
+  }
+
+  /* Right column anatomy */
+  .anatomy {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 18px;
+  }
+  .slice-anatomy {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .slice-anatomy h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .tree {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .tree .seg { color: var(--accent); }
+  .tree .file { color: var(--ink); }
+  .tree .comment { color: var(--muted); }
+  .tree .leaf { color: var(--accent2); }
+
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 18px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .legend div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .legend .sw {
+    width: 12px; height: 12px; border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  /* Public API block */
+  .public-api {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .public-api .api-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+    margin-bottom: 6px;
+    border: 1px solid var(--border);
+  }
+  .public-api .api-row .tag {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+    text-align: center;
+    background: rgba(124,92,255,0.12);
+    border-radius: 6px;
+    padding: 4px 0;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid rgba(124,92,255,0.25);
+  }
+  .public-api .api-row .code {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .public-api .api-row .code .k { color: var(--accent2); }
+  .public-api .api-row .code .s { color: var(--warn); }
+
+  /* Footer */
+  footer.bottom {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 22px;
+  }
+  .stat .v {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .stat .l {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Title accents */
+  .accent-bar {
+    position: absolute;
+    left: 0; top: 24px; bottom: 24px;
+    width: 4px;
+    background: var(--accent);
+    border-radius: 4px;
+  }
+  .accent-bar.green { background: var(--accent2); }
+  .accent-bar.amber { background: var(--warn); }
+
+  .meta {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <header class="top">
+    <div>
+      <span class="badge"><span class="dot"></span>Infographic · 01 / 02</span>
+      <h1>Feature-Sliced Design: <span>как это выглядит на плакате</span></h1>
+    </div>
+    <p>Методология обещает порядок в растущем фронтенде: семь слоёв,
+       одно направление импорта, явный публичный API у каждого слайса.
+       Здесь — «идеальная картинка», ради которой и пишется FSD.</p>
+  </header>
+
+  <section class="grid">
+
+    <!-- LEFT: Pyramid of layers -->
+    <div class="panel" style="padding-left: 36px;">
+      <div class="accent-bar"></div>
+      <h2>Слои</h2>
+      <div class="sub">Импорт только сверху вниз. Нижние слои ничего не знают про верхние.</div>
+
+      <div class="pyramid-wrap">
+
+        <div class="layer top">
+          <div class="name">app</div>
+          <div class="desc">Композиция, провайдеры, роутер, инициализация.
+            Единственное место, где слои встречаются друг с другом.</div>
+          <div class="allowed">↘ может всё</div>
+        </div>
+        <div class="arrow">▼</div>
+
+        <div class="layer">
+          <div class="name">processes <span class="badge-mini">opt</span></div>
+          <div class="desc">Сквозные сценарии (чекин, оплата). Не обязательный слой.</div>
+          <div class="allowed">↓</div>
+        </div>
+        <div class="arrow">▼</div>
+
+        <div class="layer">
+          <div class="name">pages <span class="badge-mini">screens</span></div>
+          <div class="desc">Полные экраны — композиция виджетов и фич под URL/маршрут.</div>
+          <div class="allowed">↓</div>
+        </div>
+        <div class="arrow">▼</div>
+
+        <div class="layer">
+          <div class="name">widgets</div>
+          <div class="desc">Самостоятельные композиционные блоки (шапка, плеер, дашборд).</div>
+          <div class="allowed">↓</div>
+        </div>
+        <div class="arrow">▼</div>
+
+        <div class="layer">
+          <div class="name">features</div>
+          <div class="desc">Действия с бизнес-ценностью: «лайкнуть», «оплатить», «отправить».</div>
+          <div class="allowed">↓</div>
+        </div>
+        <div class="arrow">▼</div>
+
+        <div class="layer">
+          <div class="name">entities</div>
+          <div class="desc">Доменные сущности: User, Post, Order — данные и UI сущности.</div>
+          <div class="allowed">↓</div>
+        </div>
+        <div class="arrow">▼</div>
+
+        <div class="layer">
+          <div class="name">shared</div>
+          <div class="desc">Переиспользуемая инфраструктура: UI-kit, конфиги, утилиты, API-клиент.</div>
+          <div class="allowed">база</div>
+        </div>
+
+      </div>
+
+      <p class="meta">Цвет верхнего слоя (app) подчёркивает его исключительность:
+        он — единственная «корневая» директория, остальные слои живут без
+        знания о приложении в целом.</p>
+    </div>
+
+    <!-- RIGHT: Slice anatomy + Public API -->
+    <div class="anatomy">
+
+      <div class="slice-anatomy" style="padding-left: 36px;">
+        <div class="accent-bar green"></div>
+        <h2>Анатомия слайса</h2>
+        <div class="sub">Любой слайс — это публичный API и приватные сегменты.</div>
+
+        <div class="tree">
+          <div><span class="seg">features/</span><span class="file">auth/auth-by-google/</span></div>
+          <div>&nbsp;&nbsp;├── <span class="seg">ui/</span><span class="file">       # кнопки, экраны фичи</span></div>
+          <div>&nbsp;&nbsp;├── <span class="seg">model/</span><span class="file">     # стор, схемы, селекторы</span></div>
+          <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="file">slices/</span></div>
+          <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="file">selectors/</span></div>
+          <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="file">services/</span></div>
+          <div>&nbsp;&nbsp;├── <span class="seg">lib/</span><span class="file">       # утилиты, хелперы</span></div>
+          <div>&nbsp;&nbsp;└── <span class="leaf">index.ts</span> <span class="comment"># ← публичный API</span></div>
+        </div>
+
+        <div class="legend">
+          <div><span class="sw" style="background: rgba(124,92,255,0.5); border-color: rgba(124,92,255,0.5);"></span> ui — визуальные компоненты</div>
+          <div><span class="sw" style="background: rgba(0,212,168,0.5); border-color: rgba(0,212,168,0.5);"></span> model — данные и логика</div>
+          <div><span class="sw" style="background: rgba(255,180,84,0.5); border-color: rgba(255,180,84,0.5);"></span> lib — переиспользуемые хелперы</div>
+          <div><span class="sw" style="background: rgba(255,255,255,0.08);"></span> index.ts — единственная «дверь»</div>
+        </div>
+      </div>
+
+      <div class="public-api" style="padding-left: 36px;">
+        <div class="accent-bar amber"></div>
+        <h2>Публичный API</h2>
+        <div class="sub">Контракт между слайсом и потребителями. Прямой импорт «внутрь» — запрещён.</div>
+
+        <div class="api-row">
+          <div class="tag">UI</div>
+          <div class="code"><span class="k">export</span> { <span class="s">AuthByGoogle</span> } <span class="k">from</span> <span class="s">'./ui/AuthByGoogle'</span>;</div>
+        </div>
+        <div class="api-row">
+          <div class="tag">model</div>
+          <div class="code"><span class="k">export</span> { <span class="s">fetchAuthGoogle</span> } <span class="k">from</span> <span class="s">'./model/services'</span>;</div>
+        </div>
+        <div class="api-row">
+          <div class="tag">lib</div>
+          <div class="code"><span class="k">export</span> { <span class="s">googleSignIn</span> } <span class="k">from</span> <span class="s">'./lib/google'</span>;</div>
+        </div>
+
+        <p class="meta">Идея: внутри слайса можно рефакторить как угодно,
+          пока публичный API стабилен. Потребители зависят только от него.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <footer class="bottom">
+    <div class="stat">
+      <div class="v">7</div>
+      <div class="l">слоёв, одно направление импорта</div>
+    </div>
+    <div class="stat">
+      <div class="v">3</div>
+      <div class="l">сегмента в слайсе (ui, model, lib)</div>
+    </div>
+    <div class="stat">
+      <div class="v">1</div>
+      <div class="l">точка входа в слайс — index.ts</div>
+    </div>
+    <div class="stat">
+      <div class="v">∞</div>
+      <div class="l">слайсов внутри каждого слоя</div>
+    </div>
+  </footer>
+
+</div>
+<script>
+(function () {
+  var STAGE_W = 1600;
+  function fit() {
+    var stage = document.querySelector('.stage');
+    if (!stage) return;
+    var w = document.documentElement.clientWidth || window.innerWidth;
+    var scale = Math.min(w / STAGE_W, 1);
+    stage.style.transformOrigin = 'top left';
+    stage.style.transform = 'scale(' + scale + ')';
+    stage.style.width = STAGE_W + 'px';
+    document.body.style.margin = '0';
+    var contentH = stage.scrollHeight;
+    var scaledH = Math.ceil(contentH * scale);
+    document.documentElement.style.height = scaledH + 'px';
+    document.body.style.height = scaledH + 'px';
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'infographic-height', height: scaledH }, '*');
+    }
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(fit).observe(document.documentElement);
+  }
+})();
+</script>
+</body>
+</html>

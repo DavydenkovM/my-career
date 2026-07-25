@@ -1,18 +1,8 @@
 import type { Language } from "@/content/i18n";
-
-export type ArticleBlock =
-  | { type: "p"; text: string }
-  | { type: "img"; src: string; alt: string };
-
-export type Article = {
-  slug: string;
-  title: string;
-  lead?: string;
-  date?: string;
-  tag?: string;
-  imageBase: string;
-  blocks: ArticleBlock[];
-};
+import {
+  parseArticle,
+  type Article,
+} from "@/content/articles/types";
 
 const RAW_RU = `В предыдущем посте я выдвинул тезис, что «мейнстрим мобильной разработки» в 2026 году сломан.
 
@@ -20,9 +10,9 @@ const RAW_RU = `В предыдущем посте я выдвинул тези�
 
 Для начала посмотрим на mobile landscape. Как сегодня вообще создают мобильные приложения?
 
-[картинка: mobile-mainstream.png]
+[картинка: mobile-mainstream.png | Главные направления мобильной разработки в 2026 году]
 
-[картинка: mobile-mainstream-alternatives.png]
+[картинка: mobile-mainstream-alternatives.png | Альтернативные подходы и их компромиссы]
 
 У каждого подхода есть свои сильные стороны и свои компромиссы.
 
@@ -68,7 +58,7 @@ const RAW_RU = `В предыдущем посте я выдвинул тези�
 
 Большие технологические компании такие системы создают. Обычно внутри себя.
 
-[картинка: big-companies-architecture.png]
+[картинка: big-companies-architecture.png | Крупные компании строят свои внутренние системы организации мобильной разработки]
 
 Но на рынке мало открытых и воспроизводимых решений, которые помогали бы другим компаниям масштабировать мобильную разработку.
 
@@ -89,9 +79,9 @@ Let's figure out why.
 
 First, let's look at the mobile landscape. How do people actually build mobile apps today?
 
-[image: mobile-mainstream.png]
+[image: mobile-mainstream.png | Mainstream mobile development approaches in 2026]
 
-[image: mobile-mainstream-alternatives.png]
+[image: mobile-mainstream-alternatives.png | Alternative approaches and their trade-offs]
 
 Every approach has its strengths and its trade-offs.
 
@@ -137,7 +127,7 @@ When there are more than ten teams — you need systems.
 
 Big tech companies build such systems. Usually internally.
 
-[image: big-companies-architecture.png]
+[image: big-companies-architecture.png | Big tech companies build their own internal systems to organize mobile development]
 
 But on the market there are few open and reproducible solutions that would help other companies scale mobile development.
 
@@ -152,49 +142,24 @@ In the next article I'll talk about **Mobile Core** — the foundation around wh
 And I'll also discuss why conventional approaches to organizing frontend code — Feature-Sliced Design in particular — don't always work for scaling large mobile teams.
 `;
 
-function parseArticle(md: string, imgAlt: string): ArticleBlock[] {
-  const blocks: ArticleBlock[] = [];
-  const lines = md.split("\n");
-  let buf: string[] = [];
-  const flush = () => {
-    const text = buf.join("\n").trim();
-    if (text) blocks.push({ type: "p", text });
-    buf = [];
-  };
-  for (const line of lines) {
-    const trimmed = line.trim();
-    const imgMatch = /^\[(?:картинка|image):\s*(.+?)\]$/i.exec(trimmed);
-    if (imgMatch) {
-      flush();
-      blocks.push({ type: "img", src: imgMatch[1], alt: imgAlt });
-    } else if (trimmed === "") {
-      flush();
-    } else {
-      buf.push(line);
-    }
-  }
-  flush();
-  return blocks;
-}
-
-const articleRu: Article = {
+export const articleRu: Article = {
   slug: "mobile-landscape-2026",
   title: "Mobile landscape 2026",
   lead:
     "Почему «мейнстрим мобильной разработки» в 2026 году сломан — и какие системы нужны, чтобы это исправить.",
-  date: "2026",
-  tag: "Архитектура",
+  date: "2026-07-23",
+  tags: ["Mobile", "Architecture", "Process", "AI"],
   imageBase: "/notes/mobile-landscape-2026",
   blocks: parseArticle(RAW_RU, "Иллюстрация к статье"),
 };
 
-const articleEn: Article = {
+export const articleEn: Article = {
   slug: "mobile-landscape-2026",
   title: "Mobile landscape 2026",
   lead:
     "Why the 2026 mobile mainstream is broken — and what systems are needed to fix it.",
-  date: "2026",
-  tag: "Architecture",
+  date: "2026-07-23",
+  tags: ["Mobile", "Architecture", "Process", "AI"],
   imageBase: "/notes/mobile-landscape-2026",
   blocks: parseArticle(RAW_EN, "Article illustration"),
 };

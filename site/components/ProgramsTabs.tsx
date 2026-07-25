@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLang } from "./LangProvider";
 import { getSiteContent, type ProgramCategory, type ProgramGroup } from "@/content/site";
+import { formatDate } from "@/content/articles/types";
 
 type Props = {
   groups: ProgramGroup[];
@@ -17,7 +18,7 @@ function readInitialCategory(allowed: ProgramCategory[]): ProgramCategory {
 }
 
 export function ProgramsTabs({ groups }: Props) {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const categories = groups.map((g) => g.category);
   const [active, setActive] = useState<ProgramCategory>(categories[0]);
 
@@ -107,9 +108,13 @@ export function ProgramsTabs({ groups }: Props) {
                         <h3 className="text-base font-semibold text-ink-900 group-hover:text-accent">
                           {p.title}
                         </h3>
-                        {p.tag ? <span className="chip-muted">{p.tag}</span> : null}
-                        {typeof p.year === "number" ? (
-                          <span className="font-mono text-xs text-ink-500">{p.year}</span>
+                        {p.tags?.map((tag) => (
+                          <span key={tag} className="chip-muted">{tag}</span>
+                        ))}
+                        {p.date ? (
+                          <span className="font-mono text-xs text-ink-500">
+                            {formatDate(p.date, lang)}
+                          </span>
                         ) : null}
                       </div>
                       {p.description ? (

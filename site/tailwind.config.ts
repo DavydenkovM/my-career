@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import typography from "@tailwindcss/typography";
 
 const config: Config = {
   content: [
@@ -66,9 +67,59 @@ const config: Config = {
       maxWidth: {
         prose: "70ch",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            "--tw-prose-body": "#241a11",
+            "--tw-prose-headings": "#150f08",
+            "--tw-prose-lead": "#3d2e20",
+            "--tw-prose-links": "#b45309",
+            "--tw-prose-bold": "#150f08",
+            "--tw-prose-counters": "#b45309",
+            "--tw-prose-bullets": "#b45309",
+            "--tw-prose-hr": "#e7d8c1",
+            "--tw-prose-quotes": "#3d2e20",
+            "--tw-prose-quote-borders": "#b45309",
+            "--tw-prose-captions": "#8a6a4d",
+            "--tw-prose-code": "#78350f",
+            "--tw-prose-pre-code": "#150f08",
+            "--tw-prose-pre-bg": "#f6efe2",
+            "--tw-prose-th-borders": "#e7d8c1",
+            "--tw-prose-td-borders": "#f3ece1",
+            fontFamily:
+              'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          },
+        },
+        lg: {
+          css: {
+            h2: {
+              fontFamily:
+                'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+              fontWeight: "700",
+              letterSpacing: "-0.015em",
+              textWrap: "balance",
+              borderBottom: "1px solid #e7d8c1",
+              paddingBottom: "0.5rem",
+            },
+            h3: {
+              fontFamily:
+                'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+              fontWeight: "600",
+              letterSpacing: "-0.01em",
+              textWrap: "balance",
+              borderLeft: "3px solid #b45309",
+              paddingLeft: "0.85rem",
+            },
+            "figure figcaption": {
+              fontStyle: "italic",
+              textAlign: "center",
+            },
+          },
+        },
+      },
     },
   },
-  plugins: [],
+  plugins: [typography],
 };
 
 export default config;

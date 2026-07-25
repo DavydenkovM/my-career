@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>FSD: What actually happens</title>
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #141822;
+    --panel-2: #1a1f2c;
+    --ink: #e9ecf2;
+    --muted: #8a93a3;
+    --accent: #7c5cff;
+    --accent2: #00d4a8;
+    --warn: #ffb454;
+    --danger: #ff5c7c;
+    --danger-soft: rgba(255,92,124,0.12);
+    --border: #232a38;
+    --grid: #1d2330;
+    --ok: #2ec27e;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage {
+    width: 1600px;
+    min-height: 1300px;
+    margin: 0 auto;
+    padding: 48px 56px 56px;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 26px;
+  }
+
+  header.top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 18px;
+  }
+  header.top h1 {
+    margin: 0;
+    font-size: 44px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  header.top h1 span.danger { color: var(--danger); }
+  header.top h1 span.good { color: var(--accent2); }
+  header.top p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 560px;
+    text-align: right;
+    line-height: 1.45;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .badge.danger { color: var(--danger); border-color: rgba(255,92,124,0.4); background: var(--danger-soft); }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--danger); }
+  .badge.ok .dot { background: var(--ok); }
+
+  /* Comparison row */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .pyramid {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 26px 26px;
+    position: relative;
+  }
+  .pyramid h2 {
+    margin: 0 0 4px;
+    font-size: 17px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .pyramid .sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .pyramid.bad h2 { color: var(--danger); }
+  .pyramid.good h2 { color: var(--accent2); }
+
+  .layers {
+    display: grid;
+    gap: 4px;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+  }
+  .layers .row {
+    display: grid;
+    grid-template-columns: 110px 1fr 110px;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .layers .row .n { color: var(--accent); font-weight: 700; }
+  .layers .row .d { color: var(--muted); font-size: 12px; }
+  .layers .row .right { text-align: right; color: var(--accent2); font-size: 11px; }
+  .layers .row .right.bad { color: var(--danger); }
+
+  .layers svg.violations {
+    margin-top: 10px;
+    width: 100%;
+    height: 70px;
+  }
+
+  /* Hypothesis cards */
+  .hypotheses {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
+  .hyp {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 26px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 14px;
+    position: relative;
+  }
+  .hyp .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--danger-soft);
+    color: var(--danger);
+    border: 1px solid rgba(255,92,124,0.3);
+    width: fit-content;
+  }
+  .hyp h3 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  .hyp .counter {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .hyp .counter strong { color: var(--danger); font-size: 16px; }
+  .hyp .diagram {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ink);
+    overflow: hidden;
+  }
+  .hyp .diagram .hl { color: var(--danger); }
+  .hyp .diagram .good { color: var(--accent2); }
+  .hyp .diagram .muted { color: var(--muted); }
+  .hyp .diagram .k { color: var(--warn); }
+  .hyp .impact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .hyp .impact div {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .hyp .impact .label {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .hyp .impact .text {
+    color: var(--ink);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  /* Footer stats */
+  footer.bottom {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+  .stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .stat.bad .v { color: var(--danger); }
+  .stat .v {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+  .stat .l {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .legend-mini {
+    display: flex;
+    gap: 18px;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 12px;
+  }
+  .legend-mini .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <header class="top">
+    <div>
+      <span class="badge danger"><span class="dot"></span>Infographic · 02 / 02 · Live autopsy</span>
+      <h1>FSD на практике: <span class="danger">что ломается</span><br>
+        <span style="font-size:28px; color: var(--muted); font-weight:500;">на примере <span class="good">Moke-Smoke</span> — референс FSD в категории mobile</span></h1>
+    </div>
+    <p>Moke-Smoke — React Native приложение «бросаю курить» с бейджем FSD в README.
+       Под капотом — 96+ директорий, 42 маршрута, 1 глобальный стор.
+       Четыре гипотезы — четыре подтверждения.</p>
+  </header>
+
+  <!-- Pyramid comparison -->
+  <section class="compare">
+
+    <div class="pyramid good">
+      <h2>Как должно быть</h2>
+      <div class="sub">Импорт — только сверху вниз, через публичный API слайса.</div>
+      <div class="layers">
+        <div class="row"><span class="n">app</span><span class="d">navigation · providers · store</span><span class="right">↘</span></div>
+        <div class="row"><span class="n">pages</span><span class="d">screens / routes</span><span class="right">↓</span></div>
+        <div class="row"><span class="n">widgets</span><span class="d">composition blocks</span><span class="right">↓</span></div>
+        <div class="row"><span class="n">features</span><span class="d">user actions</span><span class="right">↓</span></div>
+        <div class="row"><span class="n">entities</span><span class="d">domain</span><span class="right">↓</span></div>
+        <div class="row"><span class="n">shared</span><span class="d">ui-kit · lib · api</span><span class="right">base</span></div>
+      </div>
+      <div class="legend-mini">
+        <span><i class="dot" style="background:var(--accent2);"></i>разрешённое направление ↓</span>
+      </div>
+    </div>
+
+    <div class="pyramid bad">
+      <h2>Как в Moke-Smoke</h2>
+      <div class="sub">23 импорта нарушают направление зависимостей.</div>
+      <div class="layers">
+        <div class="row"><span class="n">app</span><span class="d">navigation · providers · store</span><span class="right bad">↘ ↗</span></div>
+        <div class="row"><span class="n">pages</span><span class="d">screens / routes</span><span class="right">↓</span></div>
+        <div class="row"><span class="n">widgets</span><span class="d">composition blocks</span><span class="right bad">↓ ↗</span></div>
+        <div class="row"><span class="n">features</span><span class="d">user actions</span><span class="right bad">↓ ↗</span></div>
+        <div class="row"><span class="n">entities</span><span class="d">domain</span><span class="right bad">↓ ↗</span></div>
+        <div class="row"><span class="n">shared</span><span class="d">ui-kit · lib · api</span><span class="right bad">↗</span></div>
+      </div>
+      <svg class="violations" viewBox="0 0 600 70" preserveAspectRatio="none">
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#ff5c7c"/>
+          </marker>
+        </defs>
+        <!-- arcs that go up from lower layers to upper ones (red) -->
+        <path d="M 60 60 Q 200 -10 380 60" stroke="#ff5c7c" stroke-width="1.5" fill="none" marker-end="url(#arr)" opacity="0.85"/>
+        <path d="M 130 60 Q 280 -20 470 60" stroke="#ff5c7c" stroke-width="1.5" fill="none" marker-end="url(#arr)" opacity="0.7"/>
+        <path d="M 220 60 Q 350 -10 540 60" stroke="#ff5c7c" stroke-width="1.5" fill="none" marker-end="url(#arr)" opacity="0.55"/>
+        <text x="300" y="20" text-anchor="middle" fill="#ff5c7c" font-size="11" font-family="ui-monospace, monospace" opacity="0.9">23 обратных импорта</text>
+      </svg>
+    </div>
+
+  </section>
+
+  <!-- 4 hypotheses -->
+  <section class="hypotheses">
+
+    <!-- A. Hard to disable -->
+    <div class="hyp">
+      <span class="tag">Гипотеза A · время и стоимость</span>
+      <h3>Модули сложно выключить</h3>
+      <div class="counter">правок в <strong>5 центральных файлах</strong>, чтобы убрать одну фичу</div>
+
+      <div class="diagram">
+        <div><span class="muted">// 1. Глобальный enum маршрутов</span></div>
+        <div><span class="k">export enum</span> <span class="hl">AppNavigation</span> {</div>
+        <div>&nbsp;&nbsp;AUDIO = <span class="good">'Audio'</span>,  <span class="muted">// ← удалить</span></div>
+        <div>&nbsp;&nbsp;AUDIO_PLAY = <span class="good">'AudioPlay'</span>,</div>
+        <div>}</div>
+        <div><span class="muted">// 2. Глобальный роутер</span></div>
+        <div>&lt;<span class="hl">Stack.Screen</span> name=AppNavigation.AUDIO <span class="hl">/&gt;</span>  <span class="muted">// ×42 экрана</span></div>
+        <div><span class="muted">// 3. Глобальный стор</span></div>
+        <div><span class="k">import</span> { playerReducer } <span class="k">from</span> <span class="hl">'features/player/player-control'</span></div>
+        <div><span class="muted">// 4. Persist-whitelist (строкой!)</span></div>
+        <div>whitelist: [..., <span class="hl">'player'</span>, ...]</div>
+        <div><span class="muted">// 5. Провайдер bottom-sheets — хардкод виджетов</span></div>
+      </div>
+
+      <div class="impact">
+        <div>
+          <div class="label">Для бизнеса</div>
+          <div class="text">A/B-тест фичи = ручной рефактор 5 файлов.
+            White-label = копировать приложение целиком.</div>
+        </div>
+        <div>
+          <div class="label">Для разработчика</div>
+          <div class="text">Любая фича знает про глобальный enum и стор.
+            Нет plugin-точки — есть «shared contract» наоборот.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B. Complex communication -->
+    <div class="hyp">
+      <span class="tag">Гипотеза B · связанность</span>
+      <h3>Между модулями сложно строить коммуникацию</h3>
+      <div class="counter"><strong>14 widget→feature</strong>, 5 feature→feature, 3 feature→app, 1 shared→feature</div>
+
+      <div class="diagram">
+        <div><span class="muted">// shared/ui/PressableOpacity.tsx:1</span></div>
+        <div><span class="k">import</span> { getVibrationIsEnabled }</div>
+        <div>&nbsp;&nbsp;<span class="k">from</span> <span class="hl">'features/setting/toggle-vibration'</span>;</div>
+        <div><span class="muted">// ↑ центральная кнопка (45 файлов) зависит от фичи</span></div>
+        <div style="height:6px"></div>
+        <div><span class="muted">// widgets/profile-setting-inputs импортирует 5 фич:</span></div>
+        <div><span class="k">import</span> { SetCigaretteCount } <span class="k">from</span> <span class="hl">'features/setting/set-cigarette-count'</span></div>
+        <div><span class="k">import</span> { SetCigaretteDay }   <span class="k">from</span> <span class="hl">'features/setting/set-cigarette-day'</span></div>
+        <div><span class="k">import</span> { SetCigarettePrice } <span class="k">from</span> <span class="hl">'features/setting/set-cigarette-price'</span></div>
+        <div><span class="muted">// …</span></div>
+        <div style="height:6px"></div>
+        <div><span class="muted">// features/smoked/i-smoked/ui/ISmoked.tsx</span></div>
+        <div><span class="k">import</span> { AppSheet } <span class="k">from</span> <span class="hl">'app/providers/SheetProvider'</span> <span class="muted">// feature → app!</span></div>
+      </div>
+
+      <div class="impact">
+        <div>
+          <div class="label">Для бизнеса</div>
+          <div class="text">Регресс в одной фиче валит другую.
+            Стоимость слияния фич растёт нелинейно.</div>
+        </div>
+        <div>
+          <div class="label">Для разработчика</div>
+          <div class="text">Общение — через глобальный Redux и прямые импорты.
+            Нет message-bus, DI, pub/sub — всё протекает.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C. Hard to extract -->
+    <div class="hyp">
+      <span class="tag">Гипотеза C · переносимость</span>
+      <h3>Модули сложно утащить в смежный проект</h3>
+      <div class="counter"><strong>5 из 15</strong> верхнеуровневых фич не имеют агрегирующего <span style="color:var(--warn)">index.ts</span></div>
+
+      <div class="diagram">
+        <div><span class="muted">// src/features/auth/index.ts —</span> <span class="hl">не существует</span></div>
+        <div><span class="muted">// потребители вынуждены импортировать глубоко:</span></div>
+        <div><span class="k">import</span> { AuthByApple }  <span class="k">from</span> <span class="hl">'features/auth/auth-by-apple'</span></div>
+        <div><span class="k">import</span> { Login }       <span class="k">from</span> <span class="hl">'features/auth/auth-by-email'</span></div>
+        <div><span class="k">import</span> { AuthByGoogle }<span class="k">from</span> <span class="hl">'features/auth/auth-by-google'</span></div>
+        <div style="height:6px"></div>
+        <div><span class="muted">// то же самое: feed/, player/, setting/, smoked/</span></div>
+        <div><span class="muted">// у setting/ — 7 под-слайсов без агрегатора</span></div>
+        <div style="height:6px"></div>
+        <div><span class="muted">// Чтобы перенести auth-by-google в новый проект:</span></div>
+        <div><span class="muted">//   1. скопировать директорию</span></div>
+        <div><span class="muted">//   2. добавить reducer</span></div>
+        <div><span class="muted">//   3. добавить enum-значение</span></div>
+        <div><span class="muted">//   4. зарегистрировать экран</span></div>
+        <div><span class="muted">//   5. поднять persistedReducer whitelist</span></div>
+      </div>
+
+      <div class="impact">
+        <div>
+          <div class="label">Для бизнеса</div>
+          <div class="text">Нельзя быстро собрать «второе приложение» из готовых фич.
+            Time-to-market нового продукта не падает с ростом базы фич.</div>
+        </div>
+        <div>
+          <div class="label">Для разработчика</div>
+          <div class="text">«Фича» — это конвенция, а не модуль.
+            5 ручных правок на каждое перемещение.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- D. Unclear contracts -->
+    <div class="hyp">
+      <span class="tag">Гипотеза D · контракты</span>
+      <h3>Контракты модулей неочевидны</h3>
+      <div class="counter">API течёт: одна фича экспортирует и reducer, и selector, и UI</div>
+
+      <div class="diagram">
+        <div><span class="muted">// features/setting/toggle-vibration/index.ts</span></div>
+        <div><span class="k">export</span> { <span class="hl">getVibrationIsEnabled</span> } <span class="muted">// selector</span></div>
+        <div><span class="k">export</span> { <span class="hl">vibrationReducer</span> }      <span class="muted">// reducer</span></div>
+        <div><span class="k">export</span> { <span class="hl">ToggleVibration</span> }       <span class="muted">// UI</span></div>
+        <div style="height:6px"></div>
+        <div><span class="muted">// ↓ 5 файлов «договорились» импортировать</span></div>
+        <div><span class="muted">//   getLanguage из language-picker как контракт:</span></div>
+        <div><span class="muted">//   entities/feed/useFeeds.ts</span></div>
+        <div><span class="muted">//   features/send-message-chat/useSendMessage.ts</span></div>
+        <div><span class="muted">//   features/send-message-chat/useChatOnline.ts</span></div>
+        <div><span class="muted">//   features/feed/feed-create-post/FeedCreatePost.tsx</span></div>
+        <div><span class="muted">//   screens/audio/audio/AudioScreen.tsx</span></div>
+        <div style="height:6px"></div>
+        <div><span class="muted">// тип маршрутов — буквально any:</span></div>
+        <div><span class="k">export type</span> NavigationStackLists&lt;<span class="hl">F = any</span>&gt; = { ... }</div>
+      </div>
+
+      <div class="impact">
+        <div>
+          <div class="label">Для бизнеса</div>
+          <div class="text">Onboarding в проект длиннее.
+            Больше шанс регрессии при «безобидном» рефакторе.</div>
+        </div>
+        <div>
+          <div class="label">Для разработчика</div>
+          <div class="text">Контракт = «как все привыкли». Нет интерфейса,
+            нет DI, нет fake-store для тестов фичи изолированно.</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer stats -->
+  <footer class="bottom">
+    <div class="stat bad"><div class="v">23</div><div class="l">импорта нарушают направление слоёв</div></div>
+    <div class="stat bad"><div class="v">14</div><div class="l">widget → feature (запрещено FSD)</div></div>
+    <div class="stat bad"><div class="v">5</div><div class="l">feature → feature (cross-cutting протекает)</div></div>
+    <div class="stat bad"><div class="v">5/15</div><div class="l">фич верхнего уровня без index.ts</div></div>
+    <div class="stat bad"><div class="v">42</div><div class="l">маршрута в одном enum-файле</div></div>
+    <div class="stat bad"><div class="v">371</div><div class="l">строка в глобальном Navigation.tsx</div></div>
+  </footer>
+
+</div>
+<script>
+(function () {
+  var STAGE_W = 1600;
+  function fit() {
+    var stage = document.querySelector('.stage');
+    if (!stage) return;
+    var w = document.documentElement.clientWidth || window.innerWidth;
+    var scale = Math.min(w / STAGE_W, 1);
+    stage.style.transformOrigin = 'top left';
+    stage.style.transform = 'scale(' + scale + ')';
+    stage.style.width = STAGE_W + 'px';
+    document.body.style.margin = '0';
+    var contentH = stage.scrollHeight;
+    var scaledH = Math.ceil(contentH * scale);
+    document.documentElement.style.height = scaledH + 'px';
+    document.body.style.height = scaledH + 'px';
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'infographic-height', height: scaledH }, '*');
+    }
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(fit).observe(document.documentElement);
+  }
+})();
+</script>
+</body>
+</html>

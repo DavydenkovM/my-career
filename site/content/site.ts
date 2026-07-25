@@ -1,4 +1,5 @@
 import type { Language } from "./i18n";
+import { getArticlePrograms } from "./articles";
 
 export type SkillGroup = {
   titleKey: "ui.skillsCore" | "ui.skillsStrong" | "ui.skillsFamiliar";
@@ -22,8 +23,8 @@ export type Program = {
   title: string;
   description?: string;
   href: string;
-  tag?: string;
-  year?: number;
+  tags?: string[];
+  date?: string;
 };
 
 export type ProgramCategory = "articles" | "courses" | "opensource";
@@ -187,16 +188,7 @@ const ru: SiteContent = {
   programs: [
     {
       category: "articles",
-      items: [
-        {
-          title: "Mobile landscape 2026",
-          description:
-            "Почему «мейнстрим мобильной разработки» в 2026 году сломан — и какие системы нужны, чтобы это исправить.",
-          href: "/programs/mobile-landscape-2026",
-          tag: "Архитектура",
-          year: 2026,
-        },
-      ],
+      items: getArticlePrograms("ru"),
     },
     { category: "courses", items: [] },
     { category: "opensource", items: [] },
@@ -318,16 +310,7 @@ const en: SiteContent = {
   programs: [
     {
       category: "articles",
-      items: [
-        {
-          title: "Mobile landscape 2026",
-          description:
-            "Why the 2026 mobile mainstream is broken — and what systems are needed to fix it.",
-          href: "/programs/mobile-landscape-2026",
-          tag: "Architecture",
-          year: 2026,
-        },
-      ],
+      items: getArticlePrograms("en"),
     },
     { category: "courses", items: [] },
     { category: "opensource", items: [] },

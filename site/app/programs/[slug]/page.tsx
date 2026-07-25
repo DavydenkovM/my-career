@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ArticleClient } from "@/components/ArticleClient";
-import { articlesBySlug } from "@/content/articles/mobile-landscape-2026";
+import { articlesBySlug, getArticleBySlug } from "@/content/articles";
+import { defaultLanguage } from "@/content/i18n";
 
 export const dynamicParams = false;
 
@@ -9,15 +10,16 @@ export function generateStaticParams() {
 }
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
-  const article = articlesBySlug[params.slug];
+  const article = getArticleBySlug(params.slug, defaultLanguage);
   if (!article) return { title: "Not found" };
   return {
-    title: `${article.title} — Михаил Давыденков`,
+    title: `${article.title} — Mikhail Davydenkov`,
     description: article.lead,
   };
 }
 
 export default function ArticlePage({ params }: { params: { slug: string } }) {
-  if (!articlesBySlug[params.slug]) notFound();
-  return <ArticleClient slug={params.slug} />;
+  const articles = articlesBySlug[params.slug];
+  if (!articles) notFound();
+  return <ArticleClient articles={articles} />;
 }
