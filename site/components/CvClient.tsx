@@ -1,12 +1,13 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
+import Link from "next/link";
 import { useLang } from "./LangProvider";
 import { getSiteContent } from "@/content/site";
 import { Section } from "./Section";
 import { TechSection } from "./TechSection";
 import { AboutSection } from "./AboutSection";
-import { Header } from "./Header";
+import { PageHeader } from "./PageHeader";
 import { StickyHeader } from "./StickyHeader";
 import { Sidebar, type NavGroup } from "./Sidebar";
 import { MobileNav } from "./MobileNav";
@@ -95,7 +96,31 @@ export function CvClient({ items }: { items: { ru: Experience[]; en: Experience[
     <>
       <StickyHeader />
       <div id="top" className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-16 print:max-w-none print:px-0 print:py-0">
-        <Header />
+        <PageHeader
+          action={
+            <Link
+              href="/programs"
+              className="inline-flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-ink-900 bg-ink-900 px-2.5 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-ink-800 active:scale-[0.98]"
+              title={t("ui.programsTitle")}
+            >
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              </svg>
+              <span>{t("ui.myPrograms")}</span>
+            </Link>
+          }
+        />
         <div className="mt-10 grid grid-cols-1 gap-x-12 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-x-14 print:block">
           <Sidebar groups={navGroups} onItemClick={onItemClick} />
 

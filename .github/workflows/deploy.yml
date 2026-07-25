@@ -41,6 +41,11 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build static site
+        env:
+          NEXT_PUBLIC_GISCUS_REPO: ${{ vars.NEXT_PUBLIC_GISCUS_REPO }}
+          NEXT_PUBLIC_GISCUS_REPO_ID: ${{ vars.NEXT_PUBLIC_GISCUS_REPO_ID }}
+          NEXT_PUBLIC_GISCUS_CATEGORY: ${{ vars.NEXT_PUBLIC_GISCUS_CATEGORY }}
+          NEXT_PUBLIC_GISCUS_CATEGORY_ID: ${{ vars.NEXT_PUBLIC_GISCUS_CATEGORY_ID }}
         run: npm run build
 
       - name: Add .nojekyll for GitHub Pages

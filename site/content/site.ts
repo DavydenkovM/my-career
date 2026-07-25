@@ -18,6 +18,21 @@ export type ProfileButton = {
   iconSrc?: string;
 };
 
+export type Program = {
+  title: string;
+  description?: string;
+  href: string;
+  tag?: string;
+  year?: number;
+};
+
+export type ProgramCategory = "articles" | "courses" | "opensource";
+
+export type ProgramGroup = {
+  category: ProgramCategory;
+  items: Program[];
+};
+
 export type SiteContent = {
   meta: {
     name: string;
@@ -40,6 +55,7 @@ export type SiteContent = {
   achievements: { text: string; interviews?: number }[];
   techs: TechBlock[];
   contacts: { label: string; value: string; href?: string }[];
+  programs: ProgramGroup[];
 };
 
 function ageFromBirth(birth: string, now = new Date()): number {
@@ -168,6 +184,23 @@ const ru: SiteContent = {
     { label: "GitHub", value: "github.com/your-handle", href: "https://github.com/your-handle" },
     { label: "LinkedIn", value: "linkedin.com/in/your-handle", href: "https://linkedin.com/in/your-handle" },
   ],
+  programs: [
+    {
+      category: "articles",
+      items: [
+        {
+          title: "Mobile landscape 2026",
+          description:
+            "Почему «мейнстрим мобильной разработки» в 2026 году сломан — и какие системы нужны, чтобы это исправить.",
+          href: "/programs/mobile-landscape-2026",
+          tag: "Архитектура",
+          year: 2026,
+        },
+      ],
+    },
+    { category: "courses", items: [] },
+    { category: "opensource", items: [] },
+  ],
 };
 
 const en: SiteContent = {
@@ -281,6 +314,23 @@ const en: SiteContent = {
     { label: "Telegram", value: "@your_handle" },
     { label: "GitHub", value: "github.com/your-handle", href: "https://github.com/your-handle" },
     { label: "LinkedIn", value: "linkedin.com/in/your-handle", href: "https://linkedin.com/in/your-handle" },
+  ],
+  programs: [
+    {
+      category: "articles",
+      items: [
+        {
+          title: "Mobile landscape 2026",
+          description:
+            "Why the 2026 mobile mainstream is broken — and what systems are needed to fix it.",
+          href: "/programs/mobile-landscape-2026",
+          tag: "Architecture",
+          year: 2026,
+        },
+      ],
+    },
+    { category: "courses", items: [] },
+    { category: "opensource", items: [] },
   ],
 };
 
