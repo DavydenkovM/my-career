@@ -33,7 +33,7 @@ function renderInline(text: string): React.ReactNode {
 
 function renderInlineWithCode(text: string): React.ReactNode {
   const parts: React.ReactNode[] = [];
-  const re = /(\*\*[^*]+\*\*|`[^`]+`)/g;
+  const re = /(\*\*[^*]+\*\*|`[^`]+`|\[([^\]]+)\]\(([^)]+)\))/g;
   let last = 0;
   let m: RegExpExecArray | null;
   let key = 0;
@@ -45,7 +45,7 @@ function renderInlineWithCode(text: string): React.ReactNode {
           {m[1].slice(2, -2)}
         </strong>,
       );
-    } else {
+    } else if (m[1].startsWith("`")) {
       parts.push(
         <code
           key={key++}
@@ -53,6 +53,20 @@ function renderInlineWithCode(text: string): React.ReactNode {
         >
           {m[1].slice(1, -1)}
         </code>,
+      );
+    } else {
+      const linkText = m[2];
+      const href = m[3];
+      const isExternal = /^https?:\/\//.test(href);
+      parts.push(
+        <Link
+          key={key++}
+          href={href}
+          {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          className="text-accent underline underline-offset-2 hover:opacity-80"
+        >
+          {linkText}
+        </Link>,
       );
     }
     last = m.index + m[0].length;
@@ -174,21 +188,31 @@ export function ArticleClient({
     if (!article) return [];
     const idxs: number[] = [];
     article.blocks.forEach((b, i) => {
-      if (b.type === "img") idxs.push(i);
+      if (b.type === "img" || b.type === "img-row") idxs.push(i);
     });
     return idxs;
   }, [article]);
 
   const slides: Slide[] = useMemo(() => {
     if (!article) return [];
-    return imageIndexes.map((i) => {
-      const b = article.blocks[i] as Extract<ArticleBlock, { type: "img" }>;
-      return {
-        src: asset(`${article.imageBase}/${b.src}`),
-        alt: b.alt,
-      };
+    const out: Slide[] = [];
+    article.blocks.forEach((b) => {
+      if (b.type === "img") {
+        out.push({
+          src: asset(`${article.imageBase}/${b.src}`),
+          alt: b.alt,
+        });
+      } else if (b.type === "img-row") {
+        b.items.forEach((it) => {
+          out.push({
+            src: asset(`${article.imageBase}/${it.src}`),
+            alt: it.alt,
+          });
+        });
+      }
     });
-  }, [article, imageIndexes]);
+    return out;
+  }, [article]);
 
   const [lightboxIndex, setLightboxIndex] = useState<number>(-1);
 
@@ -265,6 +289,91 @@ export function ArticleClient({
           renderBlock={renderBlock}
           t={t}
         />
+      );
+    }
+    if (block.type === "callout") {
+      const tone = block.tone ?? "info";
+      const toneClass =
+        tone === "warn"
+          ? "border-accent-deep/60 bg-accent-soft/30"
+          : "border-accent bg-accent-soft/40";
+      return (
+        <aside
+          key={idx}
+          className={`my-6 rounded-xl border-l-4 ${toneClass} px-5 py-4 sm:px-6 sm:py-5`}
+        >
+          {block.title ? (
+            <div className="mb-2 text-base font-bold uppercase tracking-[0.08em] text-accent-deep sm:text-lg">
+              {renderInlineWithCode(block.title)}
+            </div>
+          ) : null}
+          <div className="text-base leading-relaxed text-ink-800 sm:text-lg">
+            {renderInlineWithCode(block.body)}
+          </div>
+        </aside>
+      );
+    }
+    if (block.type === "link-card") {
+      return (
+        <Link
+          key={idx}
+          href={block.href}
+          className="my-4 flex items-start gap-3 rounded-xl border border-ink-200 bg-paper-deep p-4 transition hover:border-accent hover:bg-accent-soft/30 sm:p-5"
+        >
+          <span aria-hidden="true" className="mt-0.5 text-accent">→</span>
+          <span className="flex-1">
+            <span className="block text-base font-bold text-ink-900 sm:text-lg">
+              {block.title}
+            </span>
+            {block.description ? (
+              <span className="mt-1 block text-sm leading-relaxed text-ink-700 sm:text-base">
+                {block.description}
+              </span>
+            ) : null}
+          </span>
+        </Link>
+      );
+    }
+    if (block.type === "code") {
+      return (
+        <pre
+          key={idx}
+          className="my-4 overflow-x-auto rounded-lg border border-ink-200 bg-paper-deep p-4 text-sm leading-relaxed text-ink-900 sm:p-5"
+        >
+          <code className="font-mono whitespace-pre">{block.text}</code>
+        </pre>
+      );
+    }
+    if (block.type === "img-row") {
+      const slideOffset = slides.findIndex(
+        (s) =>
+          s.src ===
+          asset(`${article.imageBase}/${block.items[0]?.src ?? ""}`),
+      );
+      return (
+        <div
+          key={idx}
+          className="my-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4"
+        >
+          {block.items.map((it, i) => (
+            <figure key={i}>
+              <button
+                type="button"
+                onClick={() => setLightboxIndex(slideOffset >= 0 ? slideOffset + i : -1)}
+                aria-label={it.alt}
+                className="group block w-full cursor-zoom-in overflow-hidden rounded-lg border border-ink-200 bg-paper-deep transition hover:border-accent"
+              >
+                <img
+                  src={asset(`${article.imageBase}/${it.src}`)}
+                  alt={it.alt}
+                  className="w-full transition group-hover:scale-[1.01]"
+                  loading="lazy"
+                />
+              </button>
+              <figcaption>{it.caption}</figcaption>
+            </figure>
+          ))}
+        </div>
       );
     }
     const slidePos = imagePosInSlides(idx);

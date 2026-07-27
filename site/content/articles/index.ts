@@ -6,6 +6,10 @@ import {
   articleRu as fsdRu,
   articleEn as fsdEn,
 } from "./feature-sliced-design-real-life";
+// import {
+//   articleRu as coreRu,
+//   articleEn as coreEn,
+// } from "./mobile-core-requirements";
 
 const articlesByLang: Record<Language, Article[]> = {
   ru: [fsdRu, mobileRu],

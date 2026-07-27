@@ -35,23 +35,47 @@ src/
 
 ### A.1 Глобальный enum маршрутов
 
-\`src/shared/config/navigation/model/types/navigation.ts\` (100 строк) — enum \`AppNavigation\` с 42 значениями. Любая новая или удалённая фича = правка одного общего enum + одного общего типа.
+\`\`\`
+src/shared/config/navigation/model/types/navigation.ts
+\`\`\`
+
+100 строк — enum \`AppNavigation\` с 42 значениями. Любая новая или удалённая фича = правка одного общего enum + одного общего типа.
 
 ### A.2 Глобальный роутер
 
-\`src/app/navigation/ui/Navigation.tsx\` (371 строка) — 42 экрана зарегистрированы руками в одном файле.
+\`\`\`
+src/app/navigation/ui/Navigation.tsx
+\`\`\`
+
+371 строка — 42 экрана зарегистрированы руками в одном файле.
 
 ### A.3 Глобальный стор
 
-\`src/app/providers/StoreProvider/config/reducer.ts\` — \`combineReducers\` всех фич.
+\`\`\`
+src/app/providers/StoreProvider/config/reducer.ts
+\`\`\`
+
+\`combineReducers\` всех фич.
 
 ### A.4 Глобальный persist-whitelist
 
-\`src/app/providers/StoreProvider/config/persistedReducer.ts\` — whitelist персистируемых слайсов. Имена — строковые ключи, нигде не типизированы.
+\`\`\`
+src/app/providers/StoreProvider/config/persistedReducer.ts
+\`\`\`
+
+Whitelist персистируемых слайсов. Имена — строковые ключи, нигде не типизированы.
 
 ### A.5 Глобальный провайдер bottom-sheets
 
-\`src/app/providers/SheetProvider/SheetProvider.tsx\` — 12 sheet-виджетов захардкожены. Агрегатор \`src/widgets/sheet/index.ts\` ещё раз перечисляет те же 12 импортов.
+\`\`\`
+src/app/providers/SheetProvider/SheetProvider.tsx
+\`\`\`
+
+12 sheet-виджетов захардкожены. Агрегатор ниже перечисляет те же 12 импортов ещё раз:
+
+\`\`\`
+src/widgets/sheet/index.ts
+\`\`\`
 
 **Вывод:** в FSD нет механизма «фича сама себя регистрирует». Чтобы выключить — нужно знать устройство всего приложения.
 
@@ -61,7 +85,11 @@ src/
 
 ### B.1 shared → feature (критическое)
 
-\`src/shared/ui/PressableOpacity/ui/PressableOpacity.tsx\` импортирует селектор из фичи «вибрация». \`PressableOpacity\` — центральный UI-компонент, используется в 45 файлах.
+\`\`\`
+src/shared/ui/PressableOpacity/ui/PressableOpacity.tsx
+\`\`\`
+
+Импортирует селектор из фичи «вибрация». \`PressableOpacity\` — центральный UI-компонент, используется в 45 файлах.
 
 ### B.2 widget → feature (14 случаев)
 
@@ -91,7 +119,11 @@ src/
 
 ### D.1 Публичные API текут
 
-\`src/features/setting/toggle-vibration/index.ts\` экспортирует сразу селектор, редьюсер и UI-компонент. Внутренне фиче нужен только \`reducer\`. Все три текут в общий namespace.
+\`\`\`
+src/features/setting/toggle-vibration/index.ts
+\`\`\`
+
+Экспортирует сразу селектор, редьюсер и UI-компонент. Внутренне фиче нужен только \`reducer\`. Все три текут в общий namespace.
 
 ### D.2 Селектор используется как «контракт»
 
@@ -148,23 +180,47 @@ To remove the audio-player feature you have to synchronously edit at least 5 fil
 
 ### A.1 Global route enum
 
-\`src/shared/config/navigation/model/types/navigation.ts\` (100 lines) — an \`AppNavigation\` enum with 42 values. Any added or removed feature = editing one shared enum + one shared type.
+\`\`\`
+src/shared/config/navigation/model/types/navigation.ts
+\`\`\`
+
+100 lines — an \`AppNavigation\` enum with 42 values. Any added or removed feature = editing one shared enum + one shared type.
 
 ### A.2 Global router
 
-\`src/app/navigation/ui/Navigation.tsx\` (371 lines) — 42 screens manually registered in a single file.
+\`\`\`
+src/app/navigation/ui/Navigation.tsx
+\`\`\`
+
+371 lines — 42 screens manually registered in a single file.
 
 ### A.3 Global store
 
-\`src/app/providers/StoreProvider/config/reducer.ts\` — \`combineReducers\` of all features.
+\`\`\`
+src/app/providers/StoreProvider/config/reducer.ts
+\`\`\`
+
+\`combineReducers\` of all features.
 
 ### A.4 Global persist whitelist
 
-\`src/app/providers/StoreProvider/config/persistedReducer.ts\` — whitelist of persisted slices. Names are string keys, never typed.
+\`\`\`
+src/app/providers/StoreProvider/config/persistedReducer.ts
+\`\`\`
+
+Whitelist of persisted slices. Names are string keys, never typed.
 
 ### A.5 Global bottom-sheets provider
 
-\`src/app/providers/SheetProvider/SheetProvider.tsx\` — 12 sheet widgets hardcoded. The aggregator \`src/widgets/sheet/index.ts\` lists the same 12 imports again.
+\`\`\`
+src/app/providers/SheetProvider/SheetProvider.tsx
+\`\`\`
+
+12 sheet widgets hardcoded. The aggregator below lists the same 12 imports again:
+
+\`\`\`
+src/widgets/sheet/index.ts
+\`\`\`
 
 **Conclusion:** FSD has no mechanism for "a feature registers itself". To disable one you need to know the entire app's structure.
 
@@ -174,7 +230,11 @@ To remove the audio-player feature you have to synchronously edit at least 5 fil
 
 ### B.1 shared → feature (critical)
 
-\`src/shared/ui/PressableOpacity/ui/PressableOpacity.tsx\` imports a selector from the "vibration" feature. \`PressableOpacity\` is a central UI component used in 45 files.
+\`\`\`
+src/shared/ui/PressableOpacity/ui/PressableOpacity.tsx
+\`\`\`
+
+Imports a selector from the "vibration" feature. \`PressableOpacity\` is a central UI component used in 45 files.
 
 ### B.2 widget → feature (14 cases)
 
@@ -204,7 +264,11 @@ Features import \`shared/config/navigation\`. Without recreating the \`AppNaviga
 
 ### D.1 Leaky public APIs
 
-\`src/features/setting/toggle-vibration/index.ts\` exports three things at once: a selector, a reducer and a UI component. Internally the feature only needs the reducer. All three leak into the global namespace.
+\`\`\`
+src/features/setting/toggle-vibration/index.ts
+\`\`\`
+
+Exports three things at once: a selector, a reducer and a UI component. Internally the feature only needs the reducer. All three leak into the global namespace.
 
 ### D.2 Selector used as a "contract"
 
@@ -281,18 +345,102 @@ const TABS_EN: ArticleBlock = {
   ],
 };
 
-function withTabs(blocks: ArticleBlock[], tabs: ArticleBlock): ArticleBlock[] {
-  return [...blocks, tabs];
-}
+const RAW_RU_INTRO = `Поговорим сегодня немного про концепции и идеи в программировании.
 
-const RAW_RU = `Я провёл небольшой независимый research по Feature-Sliced Design — FSD.
+Мне всегда нравились архитектурные концепции, которые предлагают разработчикам методологии и идеи о том, как превратить хаос в порядок.
 
-Для нетерпеливых его результаты в конце статьи :D
+### Как философия Rails изменила веб-разработку
 
-FSD - это один из самых популярных подходов к организации кода в React-Native мире.
+В бэкенд-мире Ruby on Rails в своё время произвёл революцию, привнеся подход "Convention over Configuration" (соглашение превыше конфигурации).
 
-Когда я проводил кандидатов в команду мобильной разработки - чтобы оценить архитектурное мышление кандидата мы давали небольшое тестовое задание,
-спроектировать небольшое приложение таким образом чтобы:
+Создатель RoR, известный как DHH, описал концепцию одной ёмкой фразой: "Если мы можем сделать разумное предположение о том, что вы хотите сделать, мы сделаем это за вас. Если нет — вы всегда можете настроить". Такое решение экономило время и убирало лишний код.
+
+RoR сильно ускорил разработку веб-приложений и показал, насколько мощным может быть стандартизированный подход к разработке.
+
+[картинка: ror-convention-over-configuration.png | Convention over Configuration в Ruby on Rails]
+
+### Как Flux и Redux изменили подход к управлению состоянием
+
+Во фронтенде долгое время не было общепринятой модели управления сложным состоянием приложения.
+В 2014 году Facebook предложил Flux — идею однонаправленного потока данных, которая позже получила широкое развитие в Redux.
+
+[картинка: redux-revolution.png | Революция Flux и Redux в управлении состоянием фронтенда]
+
+Одна из ключевых идей Flux и Redux заключалась в том, чтобы отказаться от хаотичных взаимных изменений состояния и ввести явный однонаправленный поток данных: State → Action → Reducer → New State.
+
+Redux быстро получил широкое распространение и стал стандартным инструментом для управления сложным состоянием.
+
+### Как FSD стандартизировал организацию frontend-кода в 2020
+
+На этом фоне появился Feature-Sliced Design — подход, который предложил структурировать frontend-код вокруг бизнес-сущностей и пользовательских сценариев, а не только вокруг технических типов файлов.
+
+При этом FSD хорошо сочетался с предыдущими архитектурными подходами: например, Redux можно было использовать внутри FSD-приложений.
+
+Но он привнёс новые правила, решающие проблему организации кода: зависимость между слоями стала однонаправленной.
+
+[картинка: feature-slide-design-concept.png | Концепция Feature-Sliced Design]
+
+Но цифровые продукты продолжают усложняться. И вместе с ними меняются требования к архитектуре.
+
+В больших цифровых продуктах всё большую роль стали играть явные контракты между компонентами и командами. Бизнес всё чаще строит супераппы и экосистемы из нескольких цифровых продуктов. Поэтому требования к переиспользованию кода, автономности команд и явным контрактам между частями системы стали значительно выше.
+
+А затем появился новый фактор — AI-assisted разработка.
+
+Если архитектура не учитывает AI-assisted разработку как полноценную часть SDLC, то новые инструменты начинают обходить существующие правила — и архитектура постепенно трещит по швам.
+
+Давайте посмотрим, насколько FSD отвечает этим требованиям в 2026 году.
+`;
+
+const RAW_EN_INTRO = `Today, let's talk a little about concepts and ideas in programming.
+
+I've always liked architectural concepts that give developers methodologies and ideas for turning chaos into order.
+
+### How Rails philosophy changed the world of web development (created in 2004, peak popularity — 2012)
+
+In the backend world, Ruby on Rails revolutionized development by introducing the "Convention over Configuration" approach.
+
+DHH, the creator of RoR, described the concept in one concise phrase: "If we can make a reasonable guess about what you want to do, we'll do it for you. If not, you can always configure it." This saved time and eliminated unnecessary code.
+
+The backend world received a huge boost from the practices RoR introduced. Many startups took off thanks to the level of standardization Rails offered at the time.
+
+[image: ror-convention-over-configuration.png | Convention over Configuration in Ruby on Rails]
+
+### Flux / Redux ideas from 2014 standardized state management
+
+Before Flux, and later Redux, the frontend world was in complete chaos. In 2014, Facebook proposed a powerful idea — and the whole world adopted it with astonishing speed.
+
+The revolutionary idea behind Redux was that components don't change each other's state directly — state changes through an explicit, controlled flow of events: State → Action → Reducer → New State.
+
+[image: redux-revolution.png | The Flux and Redux revolution in frontend state management]
+
+Redux took off, and developers were able to build much more complex frontends.
+
+### How FSD standardized frontend code organization in 2020
+
+Over time, people arrived at a new idea: organize code around business functionality rather than around "technical file types."
+
+In 2020, this approach was called Feature-Sliced Design, and it quickly became popular.
+
+All business logic was gathered into a single slice, which made development much simpler.
+
+The approach also respected the existing legacy: Redux could be used perfectly well inside FSD applications. But it introduced new rules to solve the problem of code organization: dependencies between layers became unidirectional.
+
+[image: feature-slide-design-concept.png | The Feature-Sliced Design concept]
+
+However, time moves on and rules change. Eventually, old concepts become too restrictive and new ones have to be invented.
+
+Contract-based programming has become far more popular.
+Business often builds super-apps, and the requirements for code reuse have become significantly higher than they were 5 years ago.
+
+A new Game-Changer has emerged — the AI-assisted approach to development.
+If an architectural concept doesn't make the AI-assisted layer a First-Class Citizen in the SDLC, chaos begins and the concept starts cracking at the seams.
+
+Taking these new realities into account, let's take a look at the FSD approach in 2026. What's wrong with it?
+`;
+
+const RAW_RU_FSD = `Когда я проводил собеседования в мобильную команду, мы давали кандидатам небольшое архитектурное задание.
+
+Нужно было спроектировать приложение так, чтобы:
 
 - его части легко было переиспользовать в других приложениях (например вытащить аутентификацию или профиль)
 - иметь возможность выключать определенную функциональность приложения (например выключить в приложении систему аналитики)
@@ -300,15 +448,35 @@ FSD - это один из самых популярных подходов к �
 
 И кандидаты часто приносили FSD реализацию.
 
+### Проблемы, которые проявлялись в решениях
+
 Очень часто мы наблюдали одни и теже проблемы у самых разных кандидатов:
 - Модули сложно выключить
 - Между модулями сложно строить коммуникацию
 - Модули сложно утащить в смежный проект
 - Контракты модулей неочевидны
-- Нельзя просто так внести изменения в настройки определенного модуля (можно на глобальном уровне, но на модульном нет)
-- Совсем неочевидно как в такую организацию проекта можно встроить harness необходимый для AI-Assisted разработки
+- Сложно управлять конфигурацией отдельных модулей с верхнего уровня
+- Неочевидно, как встроить AI-assisted harness в существующую структуру проекта
 
-Многие кандидаты были достаточно сильными разработчиками, но общепринятая концепция их ограничивала.
+Самое интересное — многие кандидаты были сильными разработчиками. Но FSD не давал им очевидных инструментов для решения этих задач.
+
+Чтобы посмотреть, как FSD отвечает современным требованиям к цифровым продуктам, я провёл небольшое исследование публичного open-source проекта — приложения, которое помогает бросить курить.
+
+Я проверял несколько простых вопросов:
+
+- Насколько легко отключить отдельную функциональность?
+- Насколько просто построить коммуникацию между частями системы?
+- Можно ли перенести функциональность в другой проект?
+- Насколько очевидны контракты отдельных частей?
+
+Симптомы повторялись.
+
+[Приложение которое помогает бросить курить](https://github.com/penteleichuk/Moke-Smoke.git)
+
+Без обид авторам проекта — огромное уважение людям, которые делают такие проекты открытыми. Я оцениваю здесь не качество конкретного кода, а возможности самой архитектурной концепции: насколько хорошо она отвечает современным требованиям.
+`;
+
+const RAW_RU_FSD_ANALYSIS = `### Код вокруг слоёв vs бизнес вокруг функций
 
 Дело в том что FSD организует код вокруг архитектурных слоёв:
 entities → features → widgets → pages
@@ -325,86 +493,9 @@ entities → features → widgets → pages
 - Как её полностью отключить?
 - Какой у неё публичный API?
 - Где проходит граница ответственности команды?
-
-FSD — это архитектура организации кода.
-Но для большой цифровой платформы нужна ещё и архитектура функциональных модулей.
-
-Давайте забудем все чему нас учили, и подумаем - как организовать проект на верхнем уровне чтобы
-исправить те недостатки, которые я перечислил выше?
-
-Начнем со сбора требований:
-- Модуль должен быть полноценной архитектурной единицей приложения
-- Нужна верхнеуровневая абстракция чтобы управлять модулями
-- Должен быть тулинг который связывает ядро, модули, AI, спеки и людей
-
-## Требования к модулю
-
-| Требование | Содержание |
-|---|---|
-| **1. Гранулярность и ответственность** | **Модуль = бизнес-функция**, а не архитектурный слой. Граница модуля совпадает с границей функциональности (Авторизация, Профиль, Заказы, Аналитика, Оплата). · **Полноценная архитектурная единица**: содержит ВСЁ необходимое для работы своей функциональности — спецификацию, UI, состояние, локали, сервис, события, конфигурацию, AI-harness релевантный для модуля. Для слоя модуля - свои правила, свои скиллы, свои интерфейсы |
-| **2. Атомарность жизненного цикла** | Модуль либо полностью работает, либо полностью отсутствует в приложении. **Включение/выключение = одна строка** в init([...]) на верхнем уровне. · В коде приложения нет условных импортов вида if (analyticsEnabled) require(...). Верхний уровень решает, грузить модуль или нет. |
-| **3. Переносимость** | Модуль можно **вытащить в смежный проект** без хирургии: git-submodule + алиас в tsconfig.json. · Манифест package.json декларирует peerDependencies (ядро, UIKit, mobx, react-native) — потребитель знает, что нужно подставить. · Структура директорий стандартизирована, имя слоя = его смысл. |
-| **4. Явный и минимальный публичный контракт** | Модуль наружу отдаёт ровно три вещи: **Service** — публичный API для чтения/изменения данных (другие модули общаются с модулем только через Service слой). · **Events** — контракты для слабосвязанной коммуникации и навигации. · **Navigation routes** — URI экранов, которые модуль умеет рендерить. Всё остальное (модель, контейнеры, компоненты) — внутренности модуля, недоступны другим модулям напрямую. |
-| **5. Явные зависимости** | Модуль **декларирует**, какие сервисы других модулей ему нужны (dependencies: [...]). · Ядро валидирует граф при инициализации — нет «неявных» связей через глобалы или прямые импорты. |
-| **6. Конфигурируемость с верхнего уровня** | defaults: { moduleName: {...} } в init() — начальная конфигурация. · Возможность **override настроек конкретного модуля** без правки самого модуля (например, разный privacy policy для разных типов пользователей). · Тип конфигурации объявлен в самом модуле, но значения приходят снаружи. |
-| **7. Самодостаточность** | Свои локали (assets/locale/*.json - опционально локали могут быть получены из remote config). · Свои UI-компоненты, которых нет в общем UIKit. · Своя модель/стор — состояние инкапсулировано. |
-| **8. Точка входа как контракт** | Единственный обязательный файл — index.ts, через который ядро инициализирует модуль. · makeModule('id', factory) — фабрика, в которую ядро инжектит inject(route, screen), defaults, контекст. |
-| **9. Типовая безопасность и предсказуемость** | TypeScript везде, any запрещён в публичных контрактах. · Структура одинакова для всех модулей → предсказуемость для разработчика и инструментов. |
-| **10. AI-friendly (harness-ready)** | Стандартная структура → LLM-ассистент точно знает, где искать экраны/модель/сервис. · Для каждого слоя модуля - свои скиллы (скилл чтобы делать верстку модуля, скилл чтобы работать с данными, скилл для выстраивания внешнего интерфейса модуля и тд.) · Явные контракты → ИИ может безопасно рефакторить внутри модуля, не ломая внешние связи. · Изоляция → изменение в одном модуле не требует каскадной правки других. |
-| **11. Ориентация на Spec-Driven-Development** | Модуль следует формальной спецификации - каждый слой модуля может быть сгенерирован из спецификации · Если в модуле появляется спецификация - она становится источником правды. Пока спеки нет - модуль может управляться вручную (это необходимо для постепенной миграции большой кодовой базы на Spec-Driven Development) |
-
-## Требования к ядру (Application Core)
-
-| Требование | Содержание |
-|---|---|
-| **1. Единая точка входа в приложение** | Функция init(modules, options) — один раз на приложение. · Application компонент — корень дерева, оборачивает всё в провайдеры (темы, локали, навигация, store). |
-| **2. Реестр модулей и валидация графа зависимостей** | Принимает массив модулей, вызывает их фабрики. · Перед инициализацией строит граф dependencies, проверяет, что все заявленные зависимости будут предоставлены другими загруженными модулями. Иначе — ApplicationError на старте, не в рантайме фичи. |
-| **3. Service discovery** | Ядро должно предоставлять средства чтобы модули могли обращаться к другим модулям. · Резолв синхронный/асинхронный (для модулей, инициализирующихся отложенно). · Бросает понятную ошибку, если сервис не зарегистрирован. |
-| **4. Шина событий для межмодульного общения** | publish(event, payload) / EventBus.subscribe(event, handler). · Типизированные payload. · Гарантирует, что подписки/отписки корректно живут в lifecycle модуля. |
-| **5. Router (URI-based навигация)** | navigate('/module/screen', params) — модуле-независимый способ перехода. · inject(route, Component) — модуль регистрирует свои экраны у ядра. · Стек, deep links, back navigation — на совести ядра. |
-| **6. Connections** | Маппинг event → uri route объявляется на верхнем уровне (connections в init), не в модулях. · Это развязывает: модуль публикует событие «хочу перейти в профиль», приложение решает, какой URI этому соответствует (в текущем билде / в b2b-сборке / в веб-варианте). |
-| **7. Управление конфигурацией** | Принимает defaults для каждого модуля. · Подмешивает Remote Config / runtime overrides. · Делает конфиг доступным модулю через инжект в фабрику. |
-| **8. Темизация и локализация (платформенные сервисы)** | Реестр тем, переключение на лету. · Реестр локалей модулей, форматирование дат/чисел/валют. |
-| **9. Гарантия изоляции** | Ядро не предоставляет API, чтобы модуль А напрямую импортнул код модуля Б (кроме публичных экспортов через его index.ts и сервиса). · Импорты между модулями физически не запретишь, но **архитектурно и документально** это контрактное нарушение, которое легко ловится линтером. |
-| **10. Предсказуемость для AI-harness** | Узкий, стабильный API ядра (init, makeModule, Application, EventBus, navigate, inject, publish). · Единая сигнатура фабрики модуля — ИИ всегда знает, какие колбэки/поля доступны. · Документация, типы и примеры — машиночитаемые. |
-
-Как видно требований и к модулю и к ядру достаточно. И разумеется это неполный список требований.
-
-Подобный функционал уже реализован, и на практике выглядит примерно следующим образом (в реализации superapp-mobile-core V1)
-
-[image: app-entrypoint.png | Точка входа приложения: init([...]) с массивом модулей]
-[image: app-entrypoint__defaults.png | Та же точка входа с overrides конфигурации конкретных модулей]
-[image: module-internals.png | Внутренняя структура модуля: spec, model, ui, service, events, navigation]
-
-Если сравнить Mobile Core концепцию с тем что позволяет FSD - видно что ряд проблем решены
-
-| FSD-проблема | Как проблема решается в Mobile Core |
-|---|---|
-| Модули сложно выключить | Один массив в init([...]), нет условных require в коде |
-| Сложная межмодульная коммуникация | EventBus + URI routing + Service Locator — три явных механизма |
-| Сложно перенести в смежный проект | git submodule + alias + peerDependencies + самодостаточная структура |
-| Неочевидные контракты | Service + Events + Navigation routes — три явных канала наружу |
-| Нельзя настроить модуль с верхнего уровня | defaults в init() + Remote Config, override без правки модуля |
-| Не встраивается AI-harness | Стандартная структура + явные контракты + типобезопасность |
-
-А вот анализ реального FSD сайта как я и обещал
-
-Я взял популярный репозиторий с официального сайта FSD - приложение которое помогает бросить курить https://github.com/penteleichuk/Moke-Smoke.git (git@github.com:penteleichuk/Moke-Smoke.git)
-
-Без обид авторам проекта, уважаю людей которые делают такие штуки опенсорсно - огромное уважение за вашу работу
-Но мне нужен был пример чтобы проиллюстрировать идею и чтобы не рассуждать голословно.
-
-Здесь табы из директории research
-Каждый таб из 3 в отдельном iframe или контейнере выводить (чтобы удобно было смотреть)
 `;
 
-const RAW_EN = `I did a small independent research on Feature-Sliced Design — FSD.
-
-For the impatient — the results are at the end of the article :D
-
-FSD is one of the most popular approaches to organizing code in the React Native world.
-
-When I interviewed candidates for our mobile development team — to evaluate architectural thinking we gave them a small test task:
+const RAW_EN_FSD = `When I interviewed candidates for our mobile development team — to evaluate architectural thinking we gave them a small test task:
 design a small application in such a way that:
 
 - its parts could be easily reused in other applications (e.g. extract authentication or profile)
@@ -412,6 +503,8 @@ design a small application in such a way that:
 - you could configure a specific module from the top level (e.g. show different privacy policies for different types of users)
 
 And candidates often brought an FSD implementation.
+
+### Problems we observed in candidates
 
 Very often we observed the same problems across very different candidates:
 - Modules are hard to disable
@@ -422,6 +515,18 @@ Very often we observed the same problems across very different candidates:
 - It's completely unclear how to fit a harness needed for AI-Assisted development into this project organization
 
 Many candidates were quite strong developers, but the commonly accepted concept limited them.
+
+To check how FSD meets today's requirements for digital products, I ran a small study on a public open-source project — an app that helps people quit smoking.
+
+
+I wanted to know "how easy it is to disable a feature in a project", "how hard it is to build inter-module communication", "how hard it is to lift a module into a sibling project", "how easy it is to understand the contracts of any given module". The symptoms repeated.
+
+[The app that helps people quit smoking](https://github.com/penteleichuk/Moke-Smoke.git)
+
+No offense to the project's authors — I respect people who do such things open source, huge respect for your work. In this case I'm evaluating not the code, but the power of the concept — whether it's enough for the modern realities.
+`;
+
+const RAW_EN_FSD_ANALYSIS = `### Code around layers vs business around functions
 
 The thing is that FSD organizes code around architectural layers:
 entities → features → widgets → pages
@@ -439,86 +544,267 @@ As a result, a single business feature in FSD can be spread across multiple laye
 - What is its public API?
 - Where does the team's responsibility boundary lie?
 
+### Bottom line
+
 FSD is an architecture of code organization.
 But for a large digital platform you also need an architecture of functional modules.
-
-Let's forget everything we were taught and think — how to organize a project at the top level to fix the shortcomings I listed above?
-
-Let's start with gathering requirements:
-- A module should be a full-fledged architectural unit of the application
-- A top-level abstraction is needed to manage modules
-- There should be tooling that connects core, modules, AI, specs and people
-
-## Module requirements
-
-| Requirement | Details |
-|---|---|
-| **1. Granularity and responsibility** | **Module = business feature**, not architectural layer. The module boundary matches the feature boundary (Authentication, Profile, Orders, Analytics, Payment). · **A full-fledged architectural unit**: contains EVERYTHING needed to work its functionality — specification, UI, state, locales, service, events, configuration, AI-harness relevant to the module. For the module layer — its own rules, its own skills, its own interfaces |
-| **2. Atomicity of lifecycle** | A module either fully works, or is completely absent from the application. **Enable/disable = one line** in init([...]) at the top level. · The application code has no conditional imports like if (analyticsEnabled) require(...). The top level decides whether to load the module or not. |
-| **3. Portability** | A module can be **lifted into a sibling project** without surgery: git-submodule + alias in tsconfig.json. · The package.json manifest declares peerDependencies (core, UIKit, mobx, react-native) — the consumer knows what needs to be supplied. · Directory structure is standardized, the layer name = its meaning. |
-| **4. Explicit and minimal public contract** | A module exposes exactly three things to the outside: **Service** — public API for reading/changing data (other modules communicate with the module only through the Service layer). · **Events** — contracts for loosely-coupled communication and navigation. · **Navigation routes** — URIs of screens the module can render. Everything else (model, containers, components) is internals of the module, inaccessible to other modules directly. |
-| **5. Explicit dependencies** | The module **declares** which services of other modules it needs (dependencies: [...]). · The core validates the graph at initialization — no "implicit" connections through globals or direct imports. |
-| **6. Configurability from the top level** | defaults: { moduleName: {...} } in init() — initial configuration. · Ability to **override settings of a specific module** without modifying the module itself (e.g. different privacy policy for different user types). · The configuration type is declared in the module itself, but values come from outside. |
-| **7. Self-sufficiency** | Own locales (assets/locale/*.json — optionally locales can be obtained from remote config). · Own UI components that are not in the shared UIKit. · Own model/store — state is encapsulated. |
-| **8. Entry point as contract** | The only required file is index.ts, through which the core initializes the module. · makeModule('id', factory) — a factory into which the core injects inject(route, screen), defaults, context. |
-| **9. Type safety and predictability** | TypeScript everywhere, any is forbidden in public contracts. · The structure is the same for all modules → predictability for the developer and tools. |
-| **10. AI-friendly (harness-ready)** | Standard structure → the LLM assistant knows exactly where to look for screens/model/service. · For each module layer — its own skills (a skill to make the module's layout, a skill to work with data, a skill for building the module's external interface, etc.) · Explicit contracts → AI can safely refactor inside the module without breaking external links. · Isolation → a change in one module doesn't require cascading edits in others. |
-| **11. Orientation on Spec-Driven-Development** | The module follows a formal specification — each layer of the module can be generated from the specification · If a specification appears in the module — it becomes the source of truth. Until there is a spec — the module can be managed manually (this is necessary for gradual migration of a large codebase to Spec-Driven Development) |
-
-## Core requirements (Application Core)
-
-| Requirement | Details |
-|---|---|
-| **1. Single entry point into the application** | Function init(modules, options) — once per application. · Application component — the root of the tree, wraps everything in providers (theme, locale, navigation, store). |
-| **2. Module registry and dependency graph validation** | Accepts an array of modules, calls their factories. · Before initialization, builds the dependencies graph, checks that all declared dependencies will be provided by other loaded modules. Otherwise — ApplicationError at startup, not in feature runtime. |
-| **3. Service discovery** | The core must provide means so that modules can address other modules. · Resolution sync/async (for modules initialized lazily). · Throws a clear error if the service is not registered. |
-| **4. Event bus for inter-module communication** | publish(event, payload) / EventBus.subscribe(event, handler). · Typed payloads. · Guarantees that subscriptions/unsubscriptions correctly live in the module's lifecycle. |
-| **5. Router (URI-based navigation)** | navigate('/module/screen', params) — module-independent way of navigating. · inject(route, Component) — the module registers its screens with the core. · Stack, deep links, back navigation — the core's responsibility. |
-| **6. Connections** | Mapping event → uri route is declared at the top level (connections in init), not in modules. · This decouples: the module publishes the event "I want to go to profile", the application decides which URI this corresponds to (in the current build / in the b2b build / in the web variant). |
-| **7. Configuration management** | Accepts defaults for each module. · Mixes in Remote Config / runtime overrides. · Makes the config available to the module via inject into the factory. |
-| **8. Theming and localization (platform services)** | Theme registry, switching on the fly. · Module locale registry, formatting of dates/numbers/currencies. |
-| **9. Isolation guarantee** | The core does not provide an API for module A to directly import module B's code (other than public exports through its index.ts and service). · Imports between modules can't be physically forbidden, but **architecturally and document-wise** it is a contract violation that is easily caught by a linter. |
-| **10. Predictability for AI-harness** | A narrow, stable core API (init, makeModule, Application, EventBus, navigate, inject, publish). · A single signature for the module factory — AI always knows which callbacks/fields are available. · Documentation, types and examples are machine-readable. |
-
-As you can see, there are enough requirements both for the module and for the core. And of course this is not a complete list of requirements.
-
-Such functionality is already implemented, and in practice it looks approximately as follows (in the implementation of superapp-mobile-core V1)
-
-[image: app-entrypoint.png | App entry point: init([...]) with a module array]
-[image: app-entrypoint__defaults.png | The same entry point with per-module config overrides]
-[image: module-internals.png | Module internals: spec, model, ui, service, events, navigation]
-
-If we compare the Mobile Core concept with what FSD allows — you can see that a number of problems are solved
-
-| FSD problem | How the problem is solved in Mobile Core |
-|---|---|
-| Modules are hard to disable | One array in init([...]), no conditional require in code |
-| Complex inter-module communication | EventBus + URI routing + Service Locator — three explicit mechanisms |
-| Hard to move to a sibling project | git submodule + alias + peerDependencies + self-sufficient structure |
-| Non-obvious contracts | Service + Events + Navigation routes — three explicit outward channels |
-| Can't configure a module from the top level | defaults in init() + Remote Config, override without modifying the module |
-| Doesn't fit an AI-harness | Standard structure + explicit contracts + type safety |
-
-And here is the analysis of a real FSD site as I promised
-
-I took a popular repository from the official FSD site — an app that helps quit smoking https://github.com/penteleichuk/Moke-Smoke.git (git@github.com:penteleichuk/Moke-Smoke.git)
-
-No offense to the project's authors, I respect people who make such things open-source — huge respect for your work
-But I needed an example to illustrate the idea and to not argue in the abstract.
-
-Here are tabs from the research directory
-Each tab of 3 should be displayed in a separate iframe or container (so it's convenient to view)
 `;
+
+const CONCLUSION_IMG_ROW_RU: ArticleBlock = {
+  type: "img-row",
+  items: [
+    {
+      src: "app-entrypoint.png",
+      alt: "Точка входа в приложение",
+      caption: "Точка входа в приложение",
+    },
+    {
+      src: "app-entrypoint__defaults.png",
+      alt: "Конфигурация через defaults",
+      caption: "Конфигурация через defaults",
+    },
+    {
+      src: "module-internals.png",
+      alt: "Внутренняя структура модуля",
+      caption: "Внутренняя структура модуля",
+    },
+  ],
+};
+
+const CONCLUSION_IMG_ROW_EN: ArticleBlock = {
+  type: "img-row",
+  items: [
+    {
+      src: "app-entrypoint.png",
+      alt: "Application entry point",
+      caption: "Application entry point",
+    },
+    {
+      src: "app-entrypoint__defaults.png",
+      alt: "Configuration via defaults",
+      caption: "Configuration via defaults",
+    },
+    {
+      src: "module-internals.png",
+      alt: "Module internals",
+      caption: "Module internals",
+    },
+  ],
+};
+
+const CONCLUSION_BLOCKS_RU: ArticleBlock[] = [
+  { type: "h2", text: "Следующий уровень: архитектура функциональных модулей" },
+  {
+    type: "p",
+    text: "FSD хорошо решает задачу организации кода внутри приложения. Но когда приложение становится частью большой цифровой платформы, возникает следующий уровень проблем: как организовать сами функциональные модули — их границы, контракты, зависимости, конфигурацию, жизненный цикл и переиспользование.",
+  },
+  {
+    type: "p",
+    text: "И здесь, на мой взгляд, архитектура должна подняться на следующий уровень абстракции.",
+  },
+  {
+    type: "p",
+    text: "По крайней мере, в открытом виде я пока не вижу достаточно зрелых решений, которые системно закрывают эти задачи.",
+  },
+  {
+    type: "p",
+    text: "Поэтому я попробовал сформулировать, из каких частей вообще должна состоять такая система:",
+  },
+  {
+    type: "ol",
+    items: [
+      "**Ядро** — оркестратор модулей, управляющий их жизненным циклом, зависимостями и конфигурацией.",
+      "**Модуль как first-class сущность архитектуры** — функциональная единица с чёткими границами, контрактом и жизненным циклом. При этом внутри модуля вполне могут использоваться лучшие практики FSD.",
+      "**Инструменты** — генераторы модулей и приложений, сборка, управление зависимостями и релизами, автоматизация жизненного цикла.",
+      "**Мета-уровень** — автоматическая проверка архитектуры, контрактов и поведения системы: спецификации, валидация, harness и AI-инструменты.",
+      "**Экосистема стандартных модулей** — готовые переиспользуемые блоки для типовых задач: authentication, remote config, analytics, storage и других общих возможностей.",
+    ],
+  },
+  {
+    type: "p",
+    text: "Именно эту концепцию я называю **Mobile Core**.",
+  },
+  {
+    type: "p",
+    text: "У нас уже есть реализация многих из этих идей, которая работает в production. Но мне кажется интереснее сейчас не просто показать готовое решение, а разобраться в самом подходе.",
+  },
+  {
+    type: "ol",
+    items: [
+      "Какими свойствами должен обладать функциональный модуль?",
+      "Каким должен быть его контракт?",
+      "Как должно работать управление зависимостями и конфигурацией?",
+      "Как модуль должен подключаться, отключаться и переиспользоваться в другом приложении?",
+      "Как встроить AI-assisted разработку непосредственно в архитектуру?",
+    ],
+  },
+  CONCLUSION_IMG_ROW_RU,
+  {
+    type: "p",
+    text: "Эти скриншоты — лишь небольшой фрагмент того, как эта концепция выглядит на практике.",
+  },
+  {
+    type: "p",
+    text: "Но это пока не финальная архитектура и не готовый универсальный стандарт. Скорее, это рабочая гипотеза, которая уже частично проверена production-практикой.",
+  },
+  {
+    type: "p",
+    text: "В этой статье я хотел показать саму проблему: когда цифровой продукт растёт, одной организации кода внутри приложения становится недостаточно. Возникает необходимость управлять уже не только слоями и зависимостями, но и самими функциональными модулями — их границами, контрактами, конфигурацией, жизненным циклом и переиспользованием.",
+  },
+  {
+    type: "p",
+    text: "Для меня это следующий уровень архитектурной абстракции поверх FSD.",
+  },
+  {
+    type: "p",
+    text: "Если FSD отвечает на вопрос «как организовать код внутри приложения?», то функциональная модульность пытается ответить на следующий вопрос:",
+  },
+  {
+    type: "callout",
+    tone: "info",
+    body: "«Как организовать само приложение как систему независимых, переиспользуемых и управляемых функциональных модулей?»",
+  },
+  {
+    type: "p",
+    text: "Именно эту идею я хочу исследовать дальше.",
+  },
+  {
+    type: "p",
+    text: "В следующих статьях попробую разобрать её по слоям и сформулировать требования к каждому из них:",
+  },
+  {
+    type: "ul",
+    items: [
+      "каким должен быть функциональный модуль;",
+      "где проходит его граница;",
+      "каким должен быть его публичный контракт;",
+      "как управлять зависимостями между модулями;",
+      "как конфигурировать модуль с верхнего уровня;",
+      "как подключать и отключать функциональность;",
+      "как переносить модуль между приложениями;",
+      "и, наконец, как встроить AI-assisted разработку непосредственно в архитектуру продукта.",
+    ],
+  },
+  {
+    type: "p",
+    text: "Это пока только начало разговора.",
+  },
+];
+
+const CONCLUSION_BLOCKS_EN: ArticleBlock[] = [
+  { type: "h2", text: "The next level: architecture of functional modules" },
+  {
+    type: "p",
+    text: "FSD does a great job organizing code inside an application. But when the application becomes part of a larger digital platform, a next level of problems arises: how to organize the functional modules themselves — their boundaries, contracts, dependencies, configuration, lifecycle, and reuse.",
+  },
+  {
+    type: "p",
+    text: "And here, in my view, architecture has to rise to the next level of abstraction.",
+  },
+  {
+    type: "p",
+    text: "At least in the open, I don't see mature solutions that systematically address these tasks.",
+  },
+  {
+    type: "p",
+    text: "So I tried to formulate what parts such a system should consist of:",
+  },
+  {
+    type: "ol",
+    items: [
+      "**Core** — module orchestrator managing their lifecycle, dependencies, and configuration.",
+      "**Module as a first-class architectural entity** — a functional unit with clear boundaries, a contract, and a lifecycle. FSD best practices can still be used perfectly well inside a module.",
+      "**Tooling** — module and app generators, build, dependency and release management, lifecycle automation.",
+      "**Meta-level** — automated validation of architecture, contracts, and system behavior: specifications, validation, harness, and AI tools.",
+      "**Ecosystem of standard modules** — ready-made reusable blocks for typical tasks: authentication, remote config, analytics, storage, and other common capabilities.",
+    ],
+  },
+  {
+    type: "p",
+    text: "I call this concept **Mobile Core**.",
+  },
+  {
+    type: "p",
+    text: "We already have an implementation of many of these ideas that runs in production. But right now I'd rather not just show a finished solution — I'd like to dig into the approach itself.",
+  },
+  {
+    type: "ol",
+    items: [
+      "What properties should a functional module have?",
+      "What should its contract look like?",
+      "How should dependency and configuration management work?",
+      "How should a module be connected, disconnected, and reused in another app?",
+      "How do we embed AI-assisted development directly into the architecture?",
+    ],
+  },
+  CONCLUSION_IMG_ROW_EN,
+  {
+    type: "p",
+    text: "These screenshots are just a small fragment of what this concept looks like in practice.",
+  },
+  {
+    type: "p",
+    text: "But this is not a final architecture and not a ready-made universal standard. It's more like a working hypothesis that's already been partially validated by production practice.",
+  },
+  {
+    type: "p",
+    text: "In this article I wanted to show the problem itself: when a digital product grows, organizing code inside an application is no longer enough. You have to manage not just layers and dependencies, but the functional modules themselves — their boundaries, contracts, configuration, lifecycle, and reuse.",
+  },
+  {
+    type: "p",
+    text: "For me, this is the next level of architectural abstraction on top of FSD.",
+  },
+  {
+    type: "p",
+    text: "If FSD answers the question \"how to organize code inside an application?\", then functional modularity tries to answer the next one:",
+  },
+  {
+    type: "callout",
+    tone: "info",
+    body: "How do you organize the application itself as a system of independent, reusable, and manageable functional modules?",
+  },
+  {
+    type: "p",
+    text: "This is exactly the idea I want to explore further.",
+  },
+  {
+    type: "p",
+    text: "In the next articles I'll try to break it down layer by layer and formulate the requirements for each:",
+  },
+  {
+    type: "ul",
+    items: [
+      "what a functional module should look like;",
+      "where its boundary lies;",
+      "what its public contract should be;",
+      "how to manage dependencies between modules;",
+      "how to configure a module from the top level;",
+      "how to enable and disable functionality;",
+      "how to move a module between applications;",
+      "and finally, how to embed AI-assisted development directly into the product architecture.",
+    ],
+  },
+  {
+    type: "p",
+    text: "This is only the beginning of the conversation.",
+  },
+];
 
 export const articleRu: Article = {
   slug: "feature-sliced-design-real-life",
-  title: "Функциональная Модульность vs Feature Sliced Design",
+  title: "От Feature Sliced Design к функциональной модульности: эволюция архитектурной концепции",
   lead:
-    "Разбор реального open-source RN-проекта на FSD: 23 нарушения слоёв, 5 файлов, знающих про всё, и как организовать модули иначе.",
+    "Обсудим что нужно чтобы организовать модульный подход к организации кода для больших цифровых продуктов",
   date: "2026-07-25",
   tags: ["Mobile", "Architecture", "Modules", "FSD", "Research"],
   imageBase: "/notes/feature-sliced-design-real-life",
-  blocks: withTabs(parseArticle(RAW_RU, "Иллюстрация к статье"), TABS_RU),
+  blocks: [
+    ...parseArticle(RAW_RU_INTRO, "Иллюстрация к статье"),
+    ...parseArticle(RAW_RU_FSD, "Иллюстрация к статье"),
+    TABS_RU,
+    ...parseArticle(RAW_RU_FSD_ANALYSIS, "Иллюстрация к статье"),
+    ...CONCLUSION_BLOCKS_RU,
+  ],
 };
 
 export const articleEn: Article = {
@@ -529,7 +815,13 @@ export const articleEn: Article = {
   date: "2026-07-25",
   tags: ["Mobile", "Architecture", "Modules", "FSD", "Research"],
   imageBase: "/notes/feature-sliced-design-real-life",
-  blocks: withTabs(parseArticle(RAW_EN, "Article illustration"), TABS_EN),
+  blocks: [
+    ...parseArticle(RAW_EN_INTRO, "Article illustration"),
+    ...parseArticle(RAW_EN_FSD, "Article illustration"),
+    TABS_EN,
+    ...parseArticle(RAW_EN_FSD_ANALYSIS, "Article illustration"),
+    ...CONCLUSION_BLOCKS_EN,
+  ],
 };
 
 export function getArticle(slug: string, lang: Language): Article | null {

@@ -7,11 +7,18 @@ export type ArticleBlock =
   | { type: "ul"; items: string[] }
   | { type: "ol"; items: string[] }
   | { type: "img"; src: string; alt: string; caption: string }
+  | {
+      type: "img-row";
+      items: { src: string; alt: string; caption: string }[];
+    }
+  | { type: "code"; lang?: string; text: string }
   | { type: "table"; head: string[]; rows: string[][] }
   | {
       type: "tabs";
       items: TabItem[];
-    };
+    }
+  | { type: "callout"; title?: string; body: string; tone?: "info" | "warn" }
+  | { type: "link-card"; href: string; title: string; description?: string };
 
 export type TabItem =
   | { kind: "iframe"; label: string; src: string; title?: string; height?: number }
@@ -63,6 +70,9 @@ export function parseArticle(md: string, imgAlt: string): ArticleBlock[] {
 
   let table: { head: string[]; rows: string[][] } | null = null;
   let list: { kind: "ul" | "ol"; items: string[] } | null = null;
+  let inCode = false;
+  let codeBuf: string[] = [];
+  let codeLang = "";
 
   const isTableDivider = (l: string): boolean =>
     /^\s*\|?[\s:|-]+\|?\s*$/.test(l);
@@ -89,6 +99,32 @@ export function parseArticle(md: string, imgAlt: string): ArticleBlock[] {
     const imgMatch = /^\[(?:картинка|image):\s*(.+?)(?:\s*\|\s*(.+))?\]$/i.exec(trimmed);
     const h3Match = /^###\s+(.+)$/.exec(trimmed);
     const h2Match = /^##\s+(.+)$/.exec(trimmed);
+    const fenceMatch = /^```(\w*)\s*$/.exec(trimmed);
+
+    if (fenceMatch) {
+      if (!inCode) {
+        flush();
+        table = flushTable(table);
+        list = flushList(list);
+        inCode = true;
+        codeLang = fenceMatch[1] ?? "";
+      } else {
+        blocks.push({
+          type: "code",
+          ...(codeLang ? { lang: codeLang } : {}),
+          text: codeBuf.join("\n"),
+        });
+        codeBuf = [];
+        codeLang = "";
+        inCode = false;
+      }
+      continue;
+    }
+
+    if (inCode) {
+      codeBuf.push(line);
+      continue;
+    }
 
     if (imgMatch) {
       flush();
@@ -178,6 +214,13 @@ export function parseArticle(md: string, imgAlt: string): ArticleBlock[] {
   flush();
   if (table) flushTable(table);
   if (list) flushList(list);
+  if (inCode && codeBuf.length > 0) {
+    blocks.push({
+      type: "code",
+      ...(codeLang ? { lang: codeLang } : {}),
+      text: codeBuf.join("\n"),
+    });
+  }
   return blocks;
 }
 
