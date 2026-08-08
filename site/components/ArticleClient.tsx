@@ -77,6 +77,84 @@ function renderInlineWithCode(text: string): React.ReactNode {
 
 type Slide = { src: string; alt: string };
 
+type IframeBlockProps = {
+  block: Extract<ArticleBlock, { type: "iframe" }>;
+  article: Article;
+  t: (key: string) => string;
+};
+
+function IframeBlock({ block, article, t }: IframeBlockProps) {
+  const ref = useRef<HTMLIFrameElement>(null);
+  const [height, setHeight] = useState<number | null>(block.height ?? null);
+
+  useEffect(() => {
+    function onMessage(e: MessageEvent) {
+      if (e.source !== ref.current?.contentWindow) return;
+      const data = e.data as { type?: string; height?: number } | null;
+      if (data && data.type === "infographic-height" && typeof data.height === "number") {
+        setHeight(data.height);
+      }
+      if (data && data.type === "infographic-ready") {
+        sendWidth();
+      }
+    }
+    window.addEventListener("message", onMessage);
+
+    function sendWidth() {
+      const win = ref.current?.contentWindow;
+      if (!win) return;
+      const w = ref.current!.offsetWidth;
+      win.postMessage({ type: "infographic-width", width: w }, "*");
+    }
+
+    function onResize() {
+      sendWidth();
+    }
+    window.addEventListener("resize", onResize);
+    // Retry a few times so we don't lose the race with the iframe's script
+    // load — contentWindow isn't available until the iframe parses, and the
+    // message listener must be installed before the iframe sends "ready".
+    [0, 60, 200, 600, 1500].forEach((d) => setTimeout(sendWidth, d));
+
+    return () => {
+      window.removeEventListener("message", onMessage);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
+  return (
+    <figure className="my-6">
+      <div className="overflow-x-auto overflow-y-hidden rounded-lg border border-ink-200 bg-paper-deep">
+        <iframe
+          ref={ref}
+          src={asset(`${article.imageBase}/${block.src}`)}
+          title={block.title ?? block.caption ?? ""}
+          className="block w-full bg-[#0f1115]"
+          style={{
+            height: height ? `${height}px` : `${block.height ?? 600}px`,
+            border: 0,
+          }}
+        />
+      </div>
+      <div className="mt-1 flex items-start justify-between gap-3">
+        {block.caption ? (
+          <figcaption className="text-sm text-ink-600">{block.caption}</figcaption>
+        ) : (
+          <span />
+        )}
+        <a
+          href={asset(`${article.imageBase}/${block.src}`)}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="shrink-0 text-xs text-ink-500 hover:text-accent"
+        >
+          {t("ui.openFull")}
+        </a>
+      </div>
+    </figure>
+  );
+}
+
 type TabPanelProps = {
   items: TabItem[];
   article: Article;
@@ -92,18 +170,41 @@ function TabPanel({ items, article, renderBlock, t }: TabPanelProps) {
 
   useEffect(() => {
     function onMessage(e: MessageEvent) {
+      if (e.source !== iframeRef.current?.contentWindow) return;
       const data = e.data as { type?: string; height?: number } | null;
       if (data && data.type === "infographic-height" && typeof data.height === "number") {
         setIframeHeight(data.height);
       }
+      if (data && data.type === "infographic-ready" && iframeRef.current) {
+        const w = iframeRef.current.offsetWidth;
+        iframeRef.current.contentWindow?.postMessage(
+          { type: "infographic-width", width: w },
+          "*",
+        );
+      }
     }
     window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
-  }, []);
+
+    function onResize() {
+      if (!iframeRef.current?.contentWindow) return;
+      const w = iframeRef.current.offsetWidth;
+      iframeRef.current.contentWindow.postMessage(
+        { type: "infographic-width", width: w },
+        "*",
+      );
+    }
+    window.addEventListener("resize", onResize);
+    onResize();
+
+    return () => {
+      window.removeEventListener("message", onMessage);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [active]);
 
   if (!item) return null;
   return (
-    <div className="no-print my-4 overflow-hidden rounded-lg border border-ink-200 bg-paper-deep">
+    <div className="no-print my-4 overflow-x-auto overflow-y-hidden rounded-lg border border-ink-200 bg-paper-deep">
       <div
         role="tablist"
         aria-label="Infographics"
@@ -374,6 +475,16 @@ export function ArticleClient({
             </figure>
           ))}
         </div>
+      );
+    }
+    if (block.type === "iframe") {
+      return (
+        <IframeBlock
+          key={idx}
+          block={block}
+          article={article}
+          t={t}
+        />
       );
     }
     const slidePos = imagePosInSlides(idx);

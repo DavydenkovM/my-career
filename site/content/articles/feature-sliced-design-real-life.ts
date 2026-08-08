@@ -12,11 +12,11 @@ const RESEARCH_RU = `## Объект исследования
 | Репозиторий | https://github.com/penteleichuk/Moke-Smoke |
 | Стек | React Native 0.73 + Redux Toolkit + RN Navigation + Firebase |
 | FSD compliance | Декларируется в README (с оговоркой: pages → screens) |
-| Объём кода \`src/\` | 6 слоёв, 96+ директорий со слайсами |
+| Объём кода src/ | 6 слоёв, 96+ директорий со слайсами |
 
 ### Структура src/
 
-\`\`\`
+
 src/
 ├── app/         ← композиция: navigation, providers, store
 ├── processes/   ← (отсутствует, уместно)
@@ -25,9 +25,9 @@ src/
 ├── features/    ← 15 верхнеуровневых «фич», 40 вложенных
 ├── entities/    ← 12 доменных сущностей
 └── shared/      ← переиспользуемые абстракции (ui, lib, api, config)
-\`\`\`
 
-И всё это собрано в один \`combineReducers\` в \`src/app/providers/StoreProvider/config/reducer.ts\` и один \`Stack.Navigator\` в \`src/app/navigation/ui/Navigation.tsx\`.
+
+И всё это собрано в один combineReducers в src/app/providers/StoreProvider/config/reducer.ts и один Stack.Navigator в src/app/navigation/ui/Navigation.tsx.
 
 ## Гипотеза A — модули сложно выключить
 
@@ -35,47 +35,47 @@ src/
 
 ### A.1 Глобальный enum маршрутов
 
-\`\`\`
-src/shared/config/navigation/model/types/navigation.ts
-\`\`\`
 
-100 строк — enum \`AppNavigation\` с 42 значениями. Любая новая или удалённая фича = правка одного общего enum + одного общего типа.
+src/shared/config/navigation/model/types/navigation.ts
+
+
+100 строк — enum AppNavigation с 42 значениями. Любая новая или удалённая фича = правка одного общего enum + одного общего типа.
 
 ### A.2 Глобальный роутер
 
-\`\`\`
+
 src/app/navigation/ui/Navigation.tsx
-\`\`\`
+
 
 371 строка — 42 экрана зарегистрированы руками в одном файле.
 
 ### A.3 Глобальный стор
 
-\`\`\`
-src/app/providers/StoreProvider/config/reducer.ts
-\`\`\`
 
-\`combineReducers\` всех фич.
+src/app/providers/StoreProvider/config/reducer.ts
+
+
+combineReducers всех фич.
 
 ### A.4 Глобальный persist-whitelist
 
-\`\`\`
+
 src/app/providers/StoreProvider/config/persistedReducer.ts
-\`\`\`
+
 
 Whitelist персистируемых слайсов. Имена — строковые ключи, нигде не типизированы.
 
 ### A.5 Глобальный провайдер bottom-sheets
 
-\`\`\`
+
 src/app/providers/SheetProvider/SheetProvider.tsx
-\`\`\`
+
 
 12 sheet-виджетов захардкожены. Агрегатор ниже перечисляет те же 12 импортов ещё раз:
 
-\`\`\`
+
 src/widgets/sheet/index.ts
-\`\`\`
+
 
 **Вывод:** в FSD нет механизма «фича сама себя регистрирует». Чтобы выключить — нужно знать устройство всего приложения.
 
@@ -85,60 +85,60 @@ src/widgets/sheet/index.ts
 
 ### B.1 shared → feature (критическое)
 
-\`\`\`
-src/shared/ui/PressableOpacity/ui/PressableOpacity.tsx
-\`\`\`
 
-Импортирует селектор из фичи «вибрация». \`PressableOpacity\` — центральный UI-компонент, используется в 45 файлах.
+src/shared/ui/PressableOpacity/ui/PressableOpacity.tsx
+
+
+Импортирует селектор из фичи «вибрация». PressableOpacity — центральный UI-компонент, используется в 45 файлах.
 
 ### B.2 widget → feature (14 случаев)
 
-Виджеты массово импортируют фичи — 14 случаев. Самые показательные: \`widgets/profile-setting-inputs\` импортирует 5 фич из \`features/setting/set-*\`, \`widgets/simulator\` — 3 фичи из \`features/smoked/*\`.
+Виджеты массово импортируют фичи — 14 случаев. Самые показательные: widgets/profile-setting-inputs импортирует 5 фич из features/setting/set-*, widgets/simulator — 3 фичи из features/smoked/*.
 
 ### B.3 feature → feature (5 случаев)
 
-Фичи не изолированы. Самые «дорогие»: \`features/send-message-chat\` импортирует \`features/language-picker\`, \`features/feed/feed-create-post\` импортирует \`features/language-picker\`.
+Фичи не изолированы. Самые «дорогие»: features/send-message-chat импортирует features/language-picker, features/feed/feed-create-post импортирует features/language-picker.
 
 ### B.4 feature → app (3 случая)
 
-Самое грубое — фичи импортируют провайдер приложения. Без \`app/providers/SheetProvider\` фичи не работают вообще.
+Самое грубое — фичи импортируют провайдер приложения. Без app/providers/SheetProvider фичи не работают вообще.
 
 ## Гипотеза C — модули сложно утащить в смежный проект
 
 ### C.1 Отсутствие агрегаторов верхнего уровня
 
-Из 15 верхнеуровневых директорий в \`src/features/\` 5 крупнейших (\`auth\`, \`feed\`, \`player\`, \`setting\`, \`smoked\`) не имеют \`index.ts\` верхнего уровня.
+Из 15 верхнеуровневых директорий в src/features/ 5 крупнейших (auth, feed, player, setting, smoked) не имеют index.ts верхнего уровня.
 
-Чтобы «утащить» \`features/auth/auth-by-google\` в другой проект — нужно 5–6 ручных правок: скопировать директорию, зарегистрировать редьюсер, добавить маршрут в enum, зарегистрировать экран, добавить в persist-whitelist, проверить сущности.
+Чтобы «утащить» features/auth/auth-by-google в другой проект — нужно 5–6 ручных правок: скопировать директорию, зарегистрировать редьюсер, добавить маршрут в enum, зарегистрировать экран, добавить в persist-whitelist, проверить сущности.
 
 ### C.2 Неявная связь через центральные конфиги
 
-Фичи импортируют \`shared/config/navigation\`. Без воссоздания \`AppNavigation\`-enum (42 значения) фичи не компилируются.
+Фичи импортируют shared/config/navigation. Без воссоздания AppNavigation-enum (42 значения) фичи не компилируются.
 
 ## Гипотеза D — контракты модулей неочевидны
 
 ### D.1 Публичные API текут
 
-\`\`\`
-src/features/setting/toggle-vibration/index.ts
-\`\`\`
 
-Экспортирует сразу селектор, редьюсер и UI-компонент. Внутренне фиче нужен только \`reducer\`. Все три текут в общий namespace.
+src/features/setting/toggle-vibration/index.ts
+
+
+Экспортирует сразу селектор, редьюсер и UI-компонент. Внутренне фиче нужен только reducer. Все три текут в общий namespace.
 
 ### D.2 Селектор используется как «контракт»
 
-\`getLanguage\` из \`features/language-picker\` импортируется в 5 местах: hook фида, два хука чата, экран создания поста, экран аудио. Переименование селектора ломает 5 файлов. Нет интерфейса, нет DI, нет точки подмены.
+getLanguage из features/language-picker импортируется в 5 местах: hook фида, два хука чата, экран создания поста, экран аудио. Переименование селектора ломает 5 файлов. Нет интерфейса, нет DI, нет точки подмены.
 
-### D.3 Типизация маршрутов — \`F = any\`
+### D.3 Типизация маршрутов — F = any
 
-\`\`\`ts
+ts
 export type NavigationStackLists<F = any> = {
   [AppNavigation.COURSE]: F;
   ...
 };
-\`\`\`
 
-Контракт между фичей и навигацией — \`any\`. Опечатка в имени поля — runtime error.
+
+Контракт между фичей и навигацией — any. Опечатка в имени поля — runtime error.
 
 ## Сводная таблица нарушений
 
@@ -146,8 +146,8 @@ export type NavigationStackLists<F = any> = {
 |---|---|
 | Модули сложно выключить | 5 центральных файлов правятся вручную при отключении одной фичи |
 | Сложная межмодульная коммуникация | 14 widget→feature импортов, 5 cross-feature импортов, 3 feature→app импорта |
-| Сложно перенести в смежный проект | 15 «фич» верхнего уровня, у 5 из них нет агрегирующего \`index.ts\` |
-| Контракты модулей неочевидны | Фичи экспортируют и reducer, и selector, и UI; навигация типизирована через \`F = any\` |
+| Сложно перенести в смежный проект | 15 «фич» верхнего уровня, у 5 из них нет агрегирующего index.ts |
+| Контракты модулей неочевидны | Фичи экспортируют и reducer, и selector, и UI; навигация типизирована через F = any |
 `;
 
 const RESEARCH_EN = `## Object of study
@@ -157,11 +157,11 @@ const RESEARCH_EN = `## Object of study
 | Repository | https://github.com/penteleichuk/Moke-Smoke |
 | Stack | React Native 0.73 + Redux Toolkit + RN Navigation + Firebase |
 | FSD compliance | Self-declared in README (with a deviation: pages → screens) |
-| \`src/\` size | 6 layers, 96+ slice directories |
+| src/ size | 6 layers, 96+ slice directories |
 
 ### src/ structure
 
-\`\`\`
+
 src/
 ├── app/         ← composition: navigation, providers, store
 ├── processes/   ← (absent, appropriate)
@@ -170,9 +170,9 @@ src/
 ├── features/    ← 15 top-level «features», 40 nested
 ├── entities/    ← 12 domain entities
 └── shared/      ← reusable abstractions (ui, lib, api, config)
-\`\`\`
 
-All assembled into one \`combineReducers\` in \`src/app/providers/StoreProvider/config/reducer.ts\` and one \`Stack.Navigator\` in \`src/app/navigation/ui/Navigation.tsx\`.
+
+All assembled into one combineReducers in src/app/providers/StoreProvider/config/reducer.ts and one Stack.Navigator in src/app/navigation/ui/Navigation.tsx.
 
 ## Hypothesis A — modules are hard to disable
 
@@ -180,47 +180,47 @@ To remove the audio-player feature you have to synchronously edit at least 5 fil
 
 ### A.1 Global route enum
 
-\`\`\`
-src/shared/config/navigation/model/types/navigation.ts
-\`\`\`
 
-100 lines — an \`AppNavigation\` enum with 42 values. Any added or removed feature = editing one shared enum + one shared type.
+src/shared/config/navigation/model/types/navigation.ts
+
+
+100 lines — an AppNavigation enum with 42 values. Any added or removed feature = editing one shared enum + one shared type.
 
 ### A.2 Global router
 
-\`\`\`
+
 src/app/navigation/ui/Navigation.tsx
-\`\`\`
+
 
 371 lines — 42 screens manually registered in a single file.
 
 ### A.3 Global store
 
-\`\`\`
-src/app/providers/StoreProvider/config/reducer.ts
-\`\`\`
 
-\`combineReducers\` of all features.
+src/app/providers/StoreProvider/config/reducer.ts
+
+
+combineReducers of all features.
 
 ### A.4 Global persist whitelist
 
-\`\`\`
+
 src/app/providers/StoreProvider/config/persistedReducer.ts
-\`\`\`
+
 
 Whitelist of persisted slices. Names are string keys, never typed.
 
 ### A.5 Global bottom-sheets provider
 
-\`\`\`
+
 src/app/providers/SheetProvider/SheetProvider.tsx
-\`\`\`
+
 
 12 sheet widgets hardcoded. The aggregator below lists the same 12 imports again:
 
-\`\`\`
+
 src/widgets/sheet/index.ts
-\`\`\`
+
 
 **Conclusion:** FSD has no mechanism for "a feature registers itself". To disable one you need to know the entire app's structure.
 
@@ -230,60 +230,60 @@ src/widgets/sheet/index.ts
 
 ### B.1 shared → feature (critical)
 
-\`\`\`
-src/shared/ui/PressableOpacity/ui/PressableOpacity.tsx
-\`\`\`
 
-Imports a selector from the "vibration" feature. \`PressableOpacity\` is a central UI component used in 45 files.
+src/shared/ui/PressableOpacity/ui/PressableOpacity.tsx
+
+
+Imports a selector from the "vibration" feature. PressableOpacity is a central UI component used in 45 files.
 
 ### B.2 widget → feature (14 cases)
 
-Widgets import features en masse — 14 cases. The worst: \`widgets/profile-setting-inputs\` imports 5 features from \`features/setting/set-*\`, \`widgets/simulator\` imports 3 features from \`features/smoked/*\`.
+Widgets import features en masse — 14 cases. The worst: widgets/profile-setting-inputs imports 5 features from features/setting/set-*, widgets/simulator imports 3 features from features/smoked/*.
 
 ### B.3 feature → feature (5 cases)
 
-Features aren't isolated. The most "expensive": \`features/send-message-chat\` imports \`features/language-picker\`, \`features/feed/feed-create-post\` imports \`features/language-picker\`.
+Features aren't isolated. The most "expensive": features/send-message-chat imports features/language-picker, features/feed/feed-create-post imports features/language-picker.
 
 ### B.4 feature → app (3 cases)
 
-The worst — features import the application provider. Without \`app/providers/SheetProvider\` the features don't work at all.
+The worst — features import the application provider. Without app/providers/SheetProvider the features don't work at all.
 
 ## Hypothesis C — modules are hard to lift into a sibling project
 
 ### C.1 Missing top-level aggregators
 
-Of the 15 top-level directories in \`src/features/\`, the 5 largest (\`auth\`, \`feed\`, \`player\`, \`setting\`, \`smoked\`) have no top-level \`index.ts\`.
+Of the 15 top-level directories in src/features/, the 5 largest (auth, feed, player, setting, smoked) have no top-level index.ts.
 
-To lift \`features/auth/auth-by-google\` into another project you need 5–6 manual edits: copy the directory, register the reducer, add a route to the enum, register the screen, add to persist-whitelist, verify entities.
+To lift features/auth/auth-by-google into another project you need 5–6 manual edits: copy the directory, register the reducer, add a route to the enum, register the screen, add to persist-whitelist, verify entities.
 
 ### C.2 Implicit link through central configs
 
-Features import \`shared/config/navigation\`. Without recreating the \`AppNavigation\` enum (42 values), they don't compile.
+Features import shared/config/navigation. Without recreating the AppNavigation enum (42 values), they don't compile.
 
 ## Hypothesis D — module contracts are unclear
 
 ### D.1 Leaky public APIs
 
-\`\`\`
+
 src/features/setting/toggle-vibration/index.ts
-\`\`\`
+
 
 Exports three things at once: a selector, a reducer and a UI component. Internally the feature only needs the reducer. All three leak into the global namespace.
 
 ### D.2 Selector used as a "contract"
 
-\`getLanguage\` from \`features/language-picker\` is imported in 5 places: a feed hook, two chat hooks, a post-creation screen, an audio screen. Renaming the selector breaks 5 files. No interface, no DI, no swap point.
+getLanguage from features/language-picker is imported in 5 places: a feed hook, two chat hooks, a post-creation screen, an audio screen. Renaming the selector breaks 5 files. No interface, no DI, no swap point.
 
-### D.3 Route typing — \`F = any\`
+### D.3 Route typing — F = any
 
-\`\`\`ts
+ts
 export type NavigationStackLists<F = any> = {
   [AppNavigation.COURSE]: F;
   ...
 };
-\`\`\`
 
-The contract between a feature and navigation is \`any\`. A typo in a field name → runtime error.
+
+The contract between a feature and navigation is any. A typo in a field name → runtime error.
 
 ## Summary table of violations
 
@@ -291,8 +291,8 @@ The contract between a feature and navigation is \`any\`. A typo in a field name
 |---|---|
 | Modules are hard to disable | 5 central files manually edited to disable a single feature |
 | Hard inter-module communication | 14 widget→feature imports, 5 cross-feature imports, 3 feature→app imports |
-| Hard to move to a sibling project | 15 top-level "features", 5 of them without an aggregating \`index.ts\` |
-| Unclear module contracts | Features export reducer, selector, and UI; navigation typed via \`F = any\` |
+| Hard to move to a sibling project | 15 top-level "features", 5 of them without an aggregating index.ts |
+| Unclear module contracts | Features export reducer, selector, and UI; navigation typed via F = any |
 `;
 
 const TABS_RU: ArticleBlock = {

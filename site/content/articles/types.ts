@@ -11,6 +11,13 @@ export type ArticleBlock =
       type: "img-row";
       items: { src: string; alt: string; caption: string }[];
     }
+  | {
+      type: "iframe";
+      src: string;
+      title?: string;
+      caption?: string;
+      height?: number;
+    }
   | { type: "code"; lang?: string; text: string }
   | { type: "table"; head: string[]; rows: string[][] }
   | {
@@ -130,12 +137,23 @@ export function parseArticle(md: string, imgAlt: string): ArticleBlock[] {
       flush();
       table = flushTable(table);
       list = flushList(list);
-      blocks.push({
-        type: "img",
-        src: imgMatch[1],
-        alt: imgMatch[2]?.trim() || imgAlt,
-        caption: imgMatch[2]?.trim() || imgAlt,
-      });
+      const src = imgMatch[1];
+      const caption = imgMatch[2]?.trim() || imgAlt;
+      if (/\.html?($|\?)/i.test(src)) {
+        blocks.push({
+          type: "iframe",
+          src,
+          title: caption,
+          caption: imgMatch[2]?.trim() ? caption : undefined,
+        });
+      } else {
+        blocks.push({
+          type: "img",
+          src,
+          alt: caption,
+          caption,
+        });
+      }
       continue;
     }
 

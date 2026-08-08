@@ -32,6 +32,21 @@ cd site
 npm run build
 ```
 
+## Тестирование
+
+E2E (Playwright, headless Chromium — свой инстанс, не трогает пользовательский Chrome):
+
+```bash
+cd site
+npm run dev              # в отдельном терминале, playwright подхватит
+npm test                 # headless
+npm run test:headed      # с окном браузера
+```
+
+Тесты живут в `site/tests/`, конфиг — `site/playwright.config.ts`. Playwright
+поднимает свой Chromium через `webServer`-конфиг (`reuseExistingServer: true`),
+никаких общих браузеров с пользователем.
+
 ## Деплой
 
 Workflow `.github/workflows/deploy.yml` запускается на каждый push в `main`:

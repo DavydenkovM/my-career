@@ -104,10 +104,10 @@ export function ProgramsTabs({ groups }: Props) {
                 const inner = (
                   <>
                     <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="text-base font-semibold text-ink-900 group-hover:text-accent">
-                          {p.title}
-                        </h3>
+                      <h3 className="text-base font-semibold text-ink-900 group-hover:text-accent">
+                        {p.title}
+                      </h3>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                         {p.tags?.map((tag) => (
                           <span key={tag} className="chip-muted">{tag}</span>
                         ))}

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Mobile Core — Публичный контракт модуля</title>
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #141822;
+    --panel-2: #1a1f2c;
+    --ink: #e9ecf2;
+    --muted: #8a93a3;
+    --accent: #7c5cff;
+    --accent2: #00d4a8;
+    --warn: #ffb454;
+    --danger: #ff5c7c;
+    --border: #232a38;
+    --grid: #1d2330;
+    --ok: #2ec27e;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage {
+    width: 1600px;
+    min-height: 1200px;
+    margin: 0 auto;
+    padding: 48px 56px 56px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 28px;
+  }
+  header.top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 18px;
+  }
+  header.top h1 {
+    margin: 0;
+    font-size: 48px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  header.top h1 span { color: var(--accent2); }
+  header.top p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 24px;
+    max-width: 560px;
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  /* Diagram layout */
+  .diagram {
+    display: grid;
+    grid-template-columns: 1fr 0.7fr 1fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+  .module {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .module h2 {
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+  }
+  .module .sub {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .surface {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .surface .label {
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .surface .name {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .surface .who {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .surface .why {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.45;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+  }
+  .surface.code .name { color: var(--accent2); }
+  .surface.events .name { color: var(--warn); }
+  .surface.service .name { color: var(--danger); }
+
+  /* Core */
+  .core {
+    background: linear-gradient(180deg, rgba(124,92,255,0.10), rgba(0,212,168,0.04));
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: stretch;
+  }
+  .core h2 {
+    margin: 0;
+    font-size: 24px;
+    color: var(--accent);
+  }
+  .core .sub {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .core-api {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .core-api .kw { color: var(--accent); }
+  .core-api .id { color: var(--accent2); }
+  .core-api .cm { color: var(--muted); font-style: italic; }
+
+  /* Arrows */
+  .arrows {
+    display: grid;
+    grid-template-columns: 1fr 0.7fr 1fr;
+    gap: 24px;
+    margin-top: 22px;
+  }
+  .arrow-cell {
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .arrow-cell .arrow-line {
+    height: 28px;
+    margin: 0 auto;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--accent));
+    position: relative;
+  }
+  .arrow-cell .arrow-line::after {
+    content: "▼";
+    position: absolute;
+    bottom: -8px;
+    left: -5px;
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  /* Bottom: scenarios */
+  .scenarios {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .scenario {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .scenario h3 {
+    margin: 0 0 6px 0;
+    font-size: 24px;
+  }
+  .scenario .question {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .scenario .path {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.6;
+    background: var(--panel-2);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .scenario .path .me { color: var(--accent); font-weight: 600; }
+  .scenario .path .oth { color: var(--accent2); }
+  .scenario .path .core { color: var(--warn); }
+
+  footer.foot {
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    color: var(--muted);
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <header class="top">
+    <h1>Публичный <span>контракт</span></h1>
+    <p>Три явных канала, через которые модуль Mobile Core общается с внешним миром — и как они решают проблемы FSD с коммуникацией, контрактами и переносимостью.</p>
+  </header>
+
+  <div class="diagram">
+    <div class="module">
+      <h2>Модуль A</h2>
+      <div class="sub">Например, <code>form</code></div>
+
+      <div class="surface code">
+        <div class="label">Конфигурация</div>
+        <div class="name">index.ts → makeModule(...)</div>
+        <div class="who">Читает ядро</div>
+        <div class="why">Декларация: <code>service</code>, <code>navigation</code>, <code>locales</code>, <code>dependencies</code>. Включение/выключение модуля.</div>
+      </div>
+
+      <div class="surface events">
+        <div class="label">Публичный контракт</div>
+        <div class="name">events.ts</div>
+        <div class="who">Импортируют другие модули</div>
+        <div class="why">Типизированные события для навигации и реакций. Модуль A «просит» — другие модули «слышат».</div>
+      </div>
+
+      <div class="surface service">
+        <div class="label">Публичный API</div>
+        <div class="name">services/ → Service</div>
+        <div class="who">Запрашивают другие модули через Service Locator</div>
+        <div class="why">Чтение/изменение данных модуля A извне. Никаких прямых импортов <code>model/</code> или <code>containers/</code>.</div>
+      </div>
+    </div>
+
+    <div class="core">
+      <h2>Application Core</h2>
+      <div class="sub">init([...]) + Service Locator + EventBus + Connections</div>
+
+      <div class="core-api"><span class="cm">// Точка входа в приложение</span>
+<span class="kw">init</span>([formModule, containersModule], {
+  defaults: { form: { ... } },
+  <span class="id">connections</span>: {
+    [FormConsequentScanEvent.value]: <span class="kw">'#/containers/consequent-scan'</span>,
+  },
+  themes: [MainTheme],
+});</div>
+
+      <div class="core-api"><span class="cm">// Резолв сервиса другого модуля</span>
+<span class="kw">const</span> containers = <span class="id">Application</span>.<span class="id">resolveSync</span>&lt;Containers.Service&gt;(<span class="kw">'containers'</span>);</div>
+
+      <div class="core-api"><span class="cm">// Подписка на событие</span>
+<span class="id">EventBus</span>.<span class="id">subscribe</span>(AuthenticationLossEvent, onAuthLoss);</div>
+
+      <div class="core-api"><span class="cm">// Глобальная навигация</span>
+<span class="id">Application</span>.<span class="id">go</span>(<span class="kw">'/containers/select-bag'</span>, params);</div>
+    </div>
+
+    <div class="module">
+      <h2>Модуль B</h2>
+      <div class="sub">Например, <code>containers</code></div>
+
+      <div class="surface events">
+        <div class="label">Реакция на чужое событие</div>
+        <div class="name">EventBus.subscribe(...)</div>
+        <div class="who">Модуль B слушает события модуля A</div>
+        <div class="why">Слабосвязанная коммуникация: модуль B не знает, кто именно публикует событие, и не зависит от URI модуля A.</div>
+      </div>
+
+      <div class="surface code">
+        <div class="label">navigation.routes</div>
+        <div class="name">inject('/containers/...')</div>
+        <div class="who">Ядро мапит event → URI через connections</div>
+        <div class="why">Модуль A просит «перейди в containers» — ядро знает, какой URI у модуля B в текущей сборке.</div>
+      </div>
+
+      <div class="surface service">
+        <div class="label">Service Locator</div>
+        <div class="name">Application.resolveSync</div>
+        <div class="who">Модуль B запрашивает сервис модуля A</div>
+        <div class="why">Контрактный вызов. Если сервис не зарегистрирован — ошибка на старте, а не в рантайме фичи.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenarios">
+    <div class="scenario">
+      <h3>Сценарий 1 — Навигация</h3>
+      <div class="question">Модуль form хочет открыть экран из containers, не зная его URI.</div>
+      <div class="path"><span class="me">form</span> → <span class="oth">EventBus.publish</span>(FormConsequentScanEvent) → <span class="core">core</span> → <span class="oth">connections[event] → URI</span> → <span class="oth">containers</span> рендерит экран</div>
+    </div>
+    <div class="scenario">
+      <h3>Сценарий 2 — Данные</h3>
+      <div class="question">courier-order хочет прочитать заказ из legacy, не импортируя его model.</div>
+      <div class="path"><span class="me">courier-order</span> → <span class="core">Application.resolveSync</span>&lt;Legacy.Service&gt;(<span class="kw">'legacy'</span>) → <span class="oth">legacy</span>.findOrderIndex(...)</div>
+    </div>
+    <div class="scenario">
+      <h3>Сценарий 3 — Реакция на событие</h3>
+      <div class="question">courier-order хочет обновить заказ, когда в photo-uploader загрузили фото.</div>
+      <div class="path"><span class="oth">photo-uploader</span> → <span class="core">EventBus.publish</span>(PhotoUploadedEvent) → <span class="me">courier-order</span> обновляет свой стор</div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div>Все три канала — типизированные. <code>any</code> запрещён в публичных контрактах.</div>
+    <div>Mobile Core · Public contract</div>
+  </footer>
+
+</div>
+</body>
+<script>
+(function () {
+  var STAGE_W = 1600;
+  var MIN_SCALE = 0.75;
+  var parentWidth = null;
+  function fit() {
+    var stage = document.querySelector('.stage');
+    if (!stage) return;
+    var w = parentWidth != null ? parentWidth : (document.documentElement.clientWidth || window.innerWidth);
+    var rawScale = w / STAGE_W;
+    var scale = Math.min(rawScale, 1);
+    if (w < 600) scale = Math.max(scale, MIN_SCALE);
+    stage.style.transformOrigin = 'top left';
+    stage.style.transform = 'scale(' + scale + ')';
+    stage.style.width = STAGE_W + 'px';
+    document.body.style.margin = '0';
+    document.body.style.overflowX = 'auto';
+    document.documentElement.style.overflowX = 'auto';
+    var visualH = Math.ceil(stage.offsetHeight * scale);
+    document.documentElement.style.height = visualH + 'px';
+    document.body.style.height = visualH + 'px';
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'infographic-height', height: visualH }, '*');
+    }
+  }
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (d && d.type === 'infographic-width' && typeof d.width === 'number') {
+      parentWidth = d.width;
+      fit();
+    }
+  });
+  fit();
+  window.addEventListener('resize', fit);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(fit).observe(document.querySelector('.stage'));
+  }
+  [60, 200, 600, 1500].forEach(function (d) { return setTimeout(fit, d); });
+  if (window.parent !== window) {
+    window.parent.postMessage({ type: 'infographic-ready' }, '*');
+  }
+})();
+</script>
+</html>

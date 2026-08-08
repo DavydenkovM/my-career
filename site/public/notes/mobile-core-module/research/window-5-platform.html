@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Window 5 · Platform</title>
+<style>
+  :root {
+    --bg: #0b0d12; --panel: #141822; --panel-2: #1a1f2c;
+    --ink: #e9ecf2; --muted: #8a93a3; --accent: #7c5cff;
+    --accent-soft: rgba(124,92,255,0.14); --border: #232a38;
+    --ok: #2ec27e; --warn: #ff7043;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+  .stage { width: 820px; margin: 0 auto; padding: 36px 28px 32px;
+    display: grid; grid-template-rows: auto auto 1fr auto; gap: 18px; }
+  header h1 { margin: 0; font-size: 38px; letter-spacing: -0.02em; font-weight: 700; }
+  header h1 .ac { color: var(--accent); }
+  header p { margin: 6px 0 0; color: var(--muted); font-size: 17px; max-width: 820px; line-height: 1.5; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px;
+    border: 1px solid var(--border); border-radius: 999px; color: var(--muted);
+    font-size: 18px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 12px; }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  .scene {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 22px;
+    padding: 22px;
+  }
+  .scene h2 { margin: 0 0 6px; font-size: 22px; font-weight: 700; }
+  .scene .meta { font-size: 15px; color: var(--muted); line-height: 1.5; margin-bottom: 18px; }
+  .scene .meta b { color: var(--ink); font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+
+  .code {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 14px; overflow-x: auto;
+    padding: 14px 16px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 14px; color: var(--ink); line-height: 1.65; white-space: pre; min-width: 0; max-width: 100%;
+  }
+  .code .kw { color: #c792ea; } .code .ty { color: #82aaff; }
+  .code .b { color: var(--accent); } .code .mu { color: var(--muted); }
+  .code .str { color: #c3e88d; } .code .ok { color: var(--ok); }
+  .code .warn { color: var(--warn); }
+  .label { font-size: 13px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 8px; }
+
+  .call {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 16px;
+    padding: 14px 16px; margin-bottom: 12px;
+  }
+  .call .head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .call .head .arrow { font-size: 18px; color: var(--accent); font-family: ui-monospace, monospace; }
+  .call .head .who { font-size: 15px; }
+  .call .head .who b { color: var(--ink); font-weight: 600; }
+  .call .head .who .who-mu { color: var(--muted); }
+
+  .bff {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 16px;
+    padding: 14px 16px;
+  }
+  .bff .head { display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .bff .head .name { font-size: 16px; font-weight: 700; }
+  .bff .head .ver  { font-size: 13px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 3px 8px; border: 1px solid var(--border); border-radius: 999px; }
+  .bff ul { list-style: none; margin: 0; padding: 0; font-size: 15px; }
+  .bff li {
+    display: grid; grid-template-columns: 20px 1fr;
+    gap: 10px; padding: 5px 0; align-items: center;
+    border-bottom: 1px dashed rgba(255,255,255,0.04);
+  }
+  .bff li:last-child { border-bottom: 0; }
+  .bff li .ok { color: var(--ok); font-weight: 700; }
+  .bff li .no { color: var(--warn); font-weight: 700; }
+  .bff li .ep  { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 16px;
+    color: var(--ink); }
+
+  .what {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px 16px; font-size: 15px; color: var(--muted); line-height: 1.5;
+    margin-top: 8px;
+  }
+  .what b { color: var(--ink); font-weight: 600; }
+  .what code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px;
+    background: rgba(255,255,255,0.04); padding: 1px 5px; border-radius: 4px; color: #82aaff;
+  }
+
+  footer { color: var(--muted); font-size: 15px; display: flex; justify-content: space-between;
+    border-top: 1px solid var(--border); padding-top: 12px; }
+  footer b { color: var(--accent); }
+  .scene, .pub, .step, .call, .bff, .what, .note, .md, .arrow-note, .conn, .left, .right, .scene > .grid > div, .grid > div, .preview, .tree { min-width: 0; }
+  header h1, header h2, .scene h2, .left h2 { overflow-wrap: anywhere; max-width: 100%; }
+  .scene .meta, .arrow-note, .what, .note, .md .rule, .step .ttl, .bff li, .call .head .who, .pub .who {
+    overflow-wrap: anywhere; word-break: break-word;
+  }
+  
+</style>
+</head>
+<body>
+<div class="stage">
+  <header>
+    <span class="badge"><span class="dot"></span>Window 05 · Platform</span>
+    <h1>Окно 5 · <span class="ac">Platform</span> (контракт с BFF)</h1>
+    <p>Сервис модуля <i>расширяет</i> <code>Platform.Service</code>. Каждый метод принимает <code>request</code> и опциональный <code>metadata</code> — через <code>metadata</code> модуль и BFF договариваются о поведении: <code>allowStale</code>, <code>timeoutMs</code>, ретраи.</p>
+  </header>
+
+  <section class="scene">
+    <h2>profile наследует Platform.Service — частичный контракт живёт в <code>metadata</code></h2>
+    <div class="meta"><b>Кто заявляет:</b> модуль <code>profile</code> через <code>Service extends Platform.Service</code>. <b>Кто исполняет:</b> BFF через <code>platform</code> middleware. <b>Частичность:</b> метод <code>uploadAvatar</code> — optional, проверяется через <code>metadata</code>.</div>
+
+    <div class="grid">
+      <div>
+        <div class="label">profile · services/Profile/index.ts</div>
+<div class="code"><span class="kw">import</span> { <span class="ty">Platform</span> } <span class="kw">from</span> <span class="str">'@core'</span>;
+
+<span class="kw">export class</span> <span class="ty">Profile</span> <span class="kw">implements</span> <span class="ty">Profile</span>.<span class="ty">Service</span> {
+  <span class="kw">static</span> <span class="b">makeService</span>(defaults: <span class="ty">Profile</span>.<span class="ty">Data</span>) { ... }
+
+  <span class="kw">async</span> <span class="b">getProfile</span>(
+    request:    { id: <span class="ty">string</span> },
+    metadata?:  <span class="ty">Platform</span>.<span class="ty">Metadata</span>,
+  ): <span class="ty">Promise</span>&lt;<span class="ty">Profile</span>.<span class="ty">Data</span>&gt; { ... }
+
+  <span class="kw">async</span> <span class="b">updateProfile</span>(
+    request:    <span class="ty">Profile</span>.<span class="ty">Data</span>,
+    metadata?:  <span class="ty">Platform</span>.<span class="ty">Metadata</span>,
+  ): <span class="ty">Promise</span>&lt;<span class="ty">void</span>&gt; { ... }
+
+  <span class="kw">async</span> <span class="b">uploadAvatar</span>(
+    request:    { id: <span class="ty">string</span>; uri: <span class="ty">string</span> },
+    metadata?:  <span class="ty">Platform</span>.<span class="ty">Metadata</span>,
+  ): <span class="ty">Promise</span>&lt;{ url: <span class="ty">string</span> }&gt; { ... }
+}
+
+<span class="kw">export namespace</span> <span class="ty">Profile</span> {
+  <span class="kw">export interface</span> <span class="ty">Service</span> <span class="kw">extends</span> <span class="ty">Platform</span>.<span class="ty">Service</span> {
+    <span class="b">getProfile</span>:    (r: { id: <span class="ty">string</span> },          m?: <span class="ty">Platform</span>.<span class="ty">Metadata</span>) =&gt; <span class="ty">Promise</span>&lt;<span class="ty">Data</span>&gt;;
+    <span class="b">updateProfile</span>: (r: <span class="ty">Data</span>,                          m?: <span class="ty">Platform</span>.<span class="ty">Metadata</span>) =&gt; <span class="ty">Promise</span>&lt;<span class="ty">void</span>&gt;;
+    <span class="b">uploadAvatar</span>:  (r: { id: <span class="ty">string</span>; uri: <span class="ty">string</span> },   m?: <span class="ty">Platform</span>.<span class="ty">Metadata</span>) =&gt; <span class="ty">Promise</span>&lt;{ url: <span class="ty">string</span> }&gt;;
+  }
+}</div>
+
+        <div class="label" style="margin-top: 14px;">вызов с metadata — частичный контракт</div>
+<div class="code"><span class="kw">const</span> profile = <span class="ty">Application</span>.<span class="b">resolveSync</span>&lt;<span class="ty">Profile</span>.<span class="ty">Service</span>&gt;(<span class="str">'profile'</span>);
+
+<span class="mu">// обычный вызов</span>
+<span class="kw">const</span> p = <span class="kw">await</span> profile.<span class="b">getProfile</span>({ id: <span class="str">'u-42'</span> });
+
+<span class="mu">// с metadata: «можно вернуть кеш, иначе подождать 5s»</span>
+<span class="kw">const</span> fresh = <span class="kw">await</span> profile.<span class="b">getProfile</span>(
+  { id: <span class="str">'u-42'</span> },
+  { allowStale: <span class="kw">true</span>, timeoutMs: <span class="ty">5_000</span> },
+);</div>
+      </div>
+
+      <div>
+        <div class="call">
+          <div class="head">
+            <span class="arrow">→</span>
+            <div class="who"><b>profile</b> <span class="who-mu">→</span> <b>platform</b> middleware <span class="who-mu">→</span> <b>BFF</b></div>
+          </div>
+          <div class="code"><span class="mu">// platform видит метаданные вызова</span>
+<span class="mu">// и применяет:</span>
+<span class="mu">//   cache-control по allowStale</span>
+<span class="mu">//   timeout по timeoutMs</span>
+<span class="mu">//   retry-strategy по request-priority</span></div>
+        </div>
+
+        <div class="bff">
+          <div class="head">
+            <span class="name">BFF · modern</span>
+            <span class="ver">v3</span>
+          </div>
+          <ul>
+            <li><span class="ok">✓</span><span class="ep">GET /profile</span></li>
+            <li><span class="ok">✓</span><span class="ep">PUT /profile</span></li>
+            <li><span class="ok">✓</span><span class="ep">POST /profile/avatar</span></li>
+          </ul>
+        </div>
+        <div class="bff" style="margin-top: 10px;">
+          <div class="head">
+            <span class="name">BFF · legacy</span>
+            <span class="ver">v1</span>
+          </div>
+          <ul>
+            <li><span class="ok">✓</span><span class="ep">GET /profile</span></li>
+            <li><span class="no">—</span><span class="ep" style="color: var(--muted);">PUT /profile</span></li>
+            <li><span class="no">—</span><span class="ep" style="color: var(--muted);">POST /profile/avatar</span></li>
+          </ul>
+        </div>
+
+        <div class="what">
+          <b>Частичный контракт:</b> <code>uploadAvatar</code> опционален — profile вызывает его только если <code>platform.has('profile.uploadAvatar')</code>. Иначе UI просто не показывает кнопку «загрузить аватар». Никаких <code>try/catch</code> на 404.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span><b>5</b> · runtime-окно №5 из 6</span>
+    <span>«дай мне API — частично, по metadata»</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var STAGE_W = 820;
+  var MIN_SCALE = 0.55;
+  var parentWidth = null;
+  function fit() {
+    var stage = document.querySelector('.stage');
+    if (!stage) return;
+    var w = parentWidth != null ? parentWidth : (document.documentElement.clientWidth || window.innerWidth);
+    var rawScale = w / STAGE_W;
+    var scale = Math.min(rawScale, 1);
+    if (w < 600) scale = Math.max(scale, MIN_SCALE);
+    stage.style.transformOrigin = 'top left';
+    stage.style.transform = 'scale(' + scale + ')';
+    stage.style.width = STAGE_W + 'px';
+    document.body.style.margin = '0';
+    document.body.style.overflowX = 'auto';
+    document.documentElement.style.overflowX = 'auto';
+    var visualH = Math.ceil(stage.offsetHeight * scale);
+    document.documentElement.style.height = visualH + 'px';
+    document.body.style.height = visualH + 'px';
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'infographic-height', height: visualH }, '*');
+    }
+  }
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (d && d.type === 'infographic-width' && typeof d.width === 'number') {
+      parentWidth = d.width;
+      fit();
+    }
+  });
+  fit();
+  window.addEventListener('resize', fit);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(fit).observe(document.querySelector('.stage'));
+  }
+  [60, 200, 600, 1500].forEach(function (d) { return setTimeout(fit, d); });
+  if (window.parent !== window) {
+    window.parent.postMessage({ type: 'infographic-ready' }, '*');
+  }
+})();
+</script>
+</body>
+</html>

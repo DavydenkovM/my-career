@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
@@ -18,6 +20,7 @@
     "yet-another-react-lightbox": "^3.32.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/typography": "^0.5.20",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",

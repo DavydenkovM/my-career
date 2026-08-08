@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Window 3 · Portals</title>
+<style>
+  :root {
+    --bg: #0b0d12; --panel: #141822; --panel-2: #1a1f2c;
+    --ink: #e9ecf2; --muted: #8a93a3; --accent: #7c5cff;
+    --accent-soft: rgba(124,92,255,0.14); --border: #232a38;
+    --ok: #2ec27e;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+  .stage { width: 820px; margin: 0 auto; padding: 36px 28px 32px;
+    display: grid; grid-template-rows: auto auto 1fr auto; gap: 18px; }
+  header h1 { margin: 0; font-size: 38px; letter-spacing: -0.02em; font-weight: 700; }
+  header h1 .ac { color: var(--accent); }
+  header p { margin: 6px 0 0; color: var(--muted); font-size: 17px; max-width: 820px; line-height: 1.5; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px;
+    border: 1px solid var(--border); border-radius: 999px; color: var(--muted);
+    font-size: 18px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 12px; }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  .scene {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 22px;
+    padding: 22px;
+  }
+  .scene h2 { margin: 0 0 6px; font-size: 22px; font-weight: 700; }
+  .scene .meta { font-size: 15px; color: var(--muted); line-height: 1.5; margin-bottom: 18px; }
+  .scene .meta b { color: var(--ink); font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+  .code {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 14px; overflow-x: auto;
+    padding: 14px 16px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 14px; color: var(--ink); line-height: 1.65; white-space: pre; min-width: 0; max-width: 100%;
+  }
+  .code .kw { color: #c792ea; } .code .ty { color: #82aaff; }
+  .code .b { color: var(--accent); } .code .mu { color: var(--muted); }
+  .code .str { color: #c3e88d; }
+  .label { font-size: 13px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 8px; }
+
+  .preview {
+    background: linear-gradient(160deg, var(--panel-2), #0e1218);
+    border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px;
+  }
+  .preview .row { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+  .preview .row .swatch {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: var(--panel); border: 1px solid var(--border);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--accent); font-size: 20px;
+  }
+  .preview .row .meta-line { font-size: 18px; color: var(--muted); }
+  .preview .row .meta-line b { color: var(--ink); font-weight: 600; }
+  .preview .row .meta-line code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px;
+    background: rgba(255,255,255,0.04); padding: 1px 5px; border-radius: 4px; color: #82aaff;
+  }
+  .preview .divider { height: 1px; background: var(--border); margin: 4px 0; }
+  .preview .legend {
+    margin-top: 12px; display: flex; gap: 14px; font-size: 18px; color: var(--muted);
+  }
+  .preview .legend .sw { display: inline-flex; align-items: center; gap: 6px; }
+  .preview .legend .sw::before {
+    content: ""; display: inline-block; width: 10px; height: 10px;
+    border-radius: 3px; background: var(--accent);
+  }
+  .preview .legend .sw.host::before { background: var(--accent); }
+  .preview .legend .sw.portal::before { background: var(--ok); }
+
+  footer { color: var(--muted); font-size: 15px; display: flex; justify-content: space-between;
+    border-top: 1px solid var(--border); padding-top: 12px; }
+  footer b { color: var(--accent); }
+  .scene, .pub, .step, .call, .bff, .what, .note, .md, .arrow-note, .conn, .left, .right, .scene > .grid > div, .grid > div, .preview, .tree { min-width: 0; }
+  header h1, header h2, .scene h2, .left h2 { overflow-wrap: anywhere; max-width: 100%; }
+  .scene .meta, .arrow-note, .what, .note, .md .rule, .step .ttl, .bff li, .call .head .who, .pub .who {
+    overflow-wrap: anywhere; word-break: break-word;
+  }
+  
+</style>
+</head>
+<body>
+<div class="stage">
+  <header>
+    <span class="badge"><span class="dot"></span>Window 03 · Portals</span>
+    <h1>Окно 3 · <span class="ac">Portals</span></h1>
+    <p>Виджет, который один модуль <i>даёт</i>, а другие <i>встраивают</i> — без знания, откуда внутри модуля берётся картинка, стейт или источник. Типизированный <code>&lt;Portal&lt;…Props&gt; … /&gt;</code>.</p>
+  </header>
+
+  <section class="scene">
+    <h2>Иконка приложения — портал с инкапсулированным источником</h2>
+    <div class="meta"><b>Кто даёт портал:</b> модуль <code>application</code> (контейнер <code>application-icon</code>). <b>Кто встраивает:</b> модули <code>header</code>, <code>notifications</code>, <code>menu</code> и т. д. <b>Главное:</b> источник иконки (CDN / Remote Config) спрятан внутри <code>application</code>.</div>
+
+    <div class="grid">
+      <div>
+        <div class="label">application · containers/application-icon/index.tsx</div>
+<div class="code"><span class="kw">import</span> { <span class="ty">LayerProps</span>, <span class="ty">Portal</span>, <span class="ty">withLayer</span> } <span class="kw">from</span> <span class="str">'@core'</span>;
+<span class="kw">import</span> { <span class="ty">ApplicationStore</span> } <span class="kw">from</span> <span class="str">'../../model'</span>;
+
+<span class="kw">interface</span> <span class="ty">Props</span> <span class="kw">extends</span> <span class="ty">LayerProps</span>&lt;<span class="ty">ApplicationIcon</span>.<span class="ty">Props</span>&gt; {}
+
+<span class="kw">export class</span> <span class="ty">ApplicationIcon</span> <span class="kw">extends</span> <span class="ty">PureComponent</span>&lt;<span class="ty">Props</span>&gt; {
+  <span class="kw">private</span> _store = <span class="kw">new</span> <span class="ty">ApplicationStore</span>();
+
+  <span class="kw">override</span> <span class="b">render</span>() {
+    <span class="kw">const</span> { scheme, size } = <span class="kw">this</span>.props.layer.props;
+    <span class="kw">const</span> source = <span class="kw">this</span>._store.<span class="b">getIconSource</span>(scheme);
+    <span class="kw">return</span> &lt;<span class="ty">Image</span> source={source} size={size} /&gt;;
+  }
+}
+
+<span class="kw">export namespace</span> <span class="ty">ApplicationIcon</span> {
+  <span class="kw">export interface</span> <span class="ty">Props</span> <span class="kw">extends</span> <span class="ty">Portal</span>.<span class="ty">Props</span> {
+    scheme: <span class="str">'main'</span> | <span class="str">'notification'</span> | <span class="str">'bonus'</span>;
+    size:   <span class="kw">number</span>;
+  }
+}</div>
+
+        <div class="label" style="margin-top: 14px;">application · index.ts</div>
+<div class="code">inject(<span class="str">'/icon'</span>, () =&gt; (&lt;<span class="ty">ApplicationIcon</span> /&gt;));</div>
+
+        <div class="label" style="margin-top: 14px;">header · containers/header-bar/index.tsx</div>
+<div class="code"><span class="kw">import</span> { <span class="ty">Portal</span> } <span class="kw">from</span> <span class="str">'@core'</span>;
+<span class="kw">import type</span> { <span class="ty">ApplicationIcon</span> }
+  <span class="kw">from</span> <span class="str">'@superapp-mobile-core/application-module-application'</span>;
+
+&lt;<span class="ty">Portal</span>&lt;<span class="ty">ApplicationIcon</span>.<span class="ty">Props</span>&gt;
+  path=<span class="str">"/icon"</span>
+  scheme=<span class="str">"notification"</span>
+  size=<span class="ty">{24}</span>
+/&gt;</div>
+      </div>
+
+      <div>
+        <div class="label">что увидит пользователь</div>
+        <div class="preview">
+          <div class="row">
+            <div class="swatch">●</div>
+            <div class="meta-line">
+              <b>header</b> встроил портал<br>
+              <code>&lt;Portal&lt;ApplicationIcon.Props&gt; path="/icon" scheme="notification" /&gt;</code>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <div class="swatch" style="color: var(--ok);">●</div>
+            <div class="meta-line">
+              <b>menu</b> встроил тот же портал с другим <code>scheme</code><br>
+              <code>scheme="main" size={48}</code>
+            </div>
+          </div>
+          <div class="legend">
+            <span class="sw host">хост (header, menu, …)</span>
+            <span class="sw portal">application-icon (portal)</span>
+          </div>
+        </div>
+        <div class="label" style="margin-top: 14px;">что header / menu <i>не знают</i></div>
+        <div class="code"><span class="mu">// не импортируют:</span>
+<span class="mu">//   ApplicationIcon.tsx</span>
+<span class="mu">//   ApplicationStore</span>
+<span class="mu">// не знают:</span>
+<span class="mu">//   откуда URL картинки (CDN / Remote Config)</span>
+<span class="mu">//   как и когда иконка обновляется</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span><b>5</b> · runtime-окно №3 из 6</span>
+    <span>«вот мои виджеты — источник спрятан внутри»</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var STAGE_W = 820;
+  var MIN_SCALE = 0.55;
+  var parentWidth = null;
+  function fit() {
+    var stage = document.querySelector('.stage');
+    if (!stage) return;
+    var w = parentWidth != null ? parentWidth : (document.documentElement.clientWidth || window.innerWidth);
+    var rawScale = w / STAGE_W;
+    var scale = Math.min(rawScale, 1);
+    if (w < 600) scale = Math.max(scale, MIN_SCALE);
+    stage.style.transformOrigin = 'top left';
+    stage.style.transform = 'scale(' + scale + ')';
+    stage.style.width = STAGE_W + 'px';
+    document.body.style.margin = '0';
+    document.body.style.overflowX = 'auto';
+    document.documentElement.style.overflowX = 'auto';
+    var visualH = Math.ceil(stage.offsetHeight * scale);
+    document.documentElement.style.height = visualH + 'px';
+    document.body.style.height = visualH + 'px';
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'infographic-height', height: visualH }, '*');
+    }
+  }
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (d && d.type === 'infographic-width' && typeof d.width === 'number') {
+      parentWidth = d.width;
+      fit();
+    }
+  });
+  fit();
+  window.addEventListener('resize', fit);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(fit).observe(document.querySelector('.stage'));
+  }
+  [60, 200, 600, 1500].forEach(function (d) { return setTimeout(fit, d); });
+  if (window.parent !== window) {
+    window.parent.postMessage({ type: 'infographic-ready' }, '*');
+  }
+})();
+</script>
+</body>
+</html>

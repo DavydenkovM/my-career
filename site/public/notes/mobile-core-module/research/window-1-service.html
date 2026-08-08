@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Window 1 · Service</title>
+<style>
+  :root {
+    --bg: #0b0d12; --panel: #141822; --panel-2: #1a1f2c;
+    --ink: #e9ecf2; --muted: #8a93a3; --accent: #7c5cff;
+    --accent-soft: rgba(124,92,255,0.14); --border: #232a38;
+    --ok: #2ec27e;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+  .stage { width: 820px; margin: 0 auto; padding: 36px 28px 32px;
+    display: grid; grid-template-rows: auto auto 1fr auto; gap: 18px; }
+  header h1 { margin: 0; font-size: 38px; letter-spacing: -0.02em; font-weight: 700; }
+  header h1 .ac { color: var(--accent); }
+  header p { margin: 6px 0 0; color: var(--muted); font-size: 17px; max-width: 780px; line-height: 1.5; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px;
+    border: 1px solid var(--border); border-radius: 999px; color: var(--muted);
+    font-size: 18px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 12px; }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  .scene {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 22px;
+    padding: 22px; display: grid; grid-template-columns: 1fr; gap: 18px;
+  }
+  .left h2 { margin: 0 0 8px; font-size: 22px; font-weight: 700; }
+  .left .meta { font-size: 15px; color: var(--muted); line-height: 1.5; margin-bottom: 18px; }
+  .left .meta b { color: var(--ink); font-weight: 600; }
+  .code {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 14px; overflow-x: auto;
+    padding: 14px 16px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 14px; color: var(--ink); line-height: 1.65; white-space: pre; min-width: 0; max-width: 100%;
+  }
+  .code .kw { color: #c792ea; } .code .ty { color: #82aaff; }
+  .code .b { color: var(--accent); } .code .mu { color: var(--muted); }
+  .code .str { color: #c3e88d; } .code .ok { color: var(--ok); }
+  .label { font-size: 13px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.08em; margin: 12px 0 6px; }
+  .arrow-note { font-size: 16px; color: var(--muted); margin-top: 12px; line-height: 1.5; }
+  .arrow-note b { color: var(--ink); font-weight: 600; }
+
+  .right { display: grid; grid-template-rows: auto auto 1fr; gap: 10px; }
+  .right .panel {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px 16px; font-size: 15px; color: var(--muted); line-height: 1.5;
+  }
+  .right .panel b { color: var(--ink); font-weight: 600; }
+  .right .panel .role {
+    display: inline-block; font-size: 13px; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;
+  }
+  .right .panel .role.r { color: var(--ok); }
+  .right .panel .role.w { color: var(--muted); }
+  .right .panel code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px;
+    background: rgba(255,255,255,0.04); padding: 1px 5px; border-radius: 4px; color: #82aaff;
+  }
+
+  footer { color: var(--muted); font-size: 15px; display: flex; justify-content: space-between;
+    border-top: 1px solid var(--border); padding-top: 12px; }
+  footer b { color: var(--accent); }
+  .scene, .pub, .step, .call, .bff, .what, .note, .md, .arrow-note, .conn, .left, .right, .scene > .grid > div, .grid > div, .preview, .tree { min-width: 0; }
+  header h1, header h2, .scene h2, .left h2 { overflow-wrap: anywhere; max-width: 100%; }
+  .scene .meta, .arrow-note, .what, .note, .md .rule, .step .ttl, .bff li, .call .head .who, .pub .who {
+    overflow-wrap: anywhere; word-break: break-word;
+  }
+  
+</style>
+</head>
+<body>
+<div class="stage">
+  <header>
+    <span class="badge"><span class="dot"></span>Window 01 · Service</span>
+    <h1>Окно 1 · <span class="ac">Service</span></h1>
+    <p>Публичный API модуля. Один сервис на модуль. Другие модули читают и меняют инкапсулированные данные через <code>Application.resolveSync&lt;...&gt;</code>.</p>
+  </header>
+
+  <section class="scene">
+    <div class="left">
+      <h2>Корзина читает профиль</h2>
+      <div class="meta"><b>Кто вызывает:</b> модуль <code>cart</code>. <b>Чей сервис:</b> модуль <code>profile</code>.</div>
+
+      <div class="label">cart · containers/checkout/index.tsx</div>
+<div class="code"><span class="kw">import</span> { <span class="ty">Application</span> } <span class="kw">from</span> <span class="str">'@core'</span>;
+<span class="kw">import type</span> { <span class="ty">Profile</span> } <span class="kw">from</span> <span class="str">'@superapp-mobile-core/application-module-profile'</span>;
+
+<span class="kw">const</span> profile = <span class="ty">Application</span>.<span class="b">resolveSync</span>&lt;<span class="ty">Profile</span>.<span class="ty">Service</span>&gt;(<span class="str">'profile'</span>);
+<span class="kw">const</span> phone   = profile?.<span class="b">getPhone</span>();</div>
+
+      <div class="arrow-note"><b>Что получает карта:</b> типизированный экземпляр <code>Profile.Service</code>. Если профиль ещё не инициализирован — <code>undefined</code> через <code>?.</code>.</div>
+    </div>
+
+    <div class="right">
+      <div class="panel">
+        <span class="role">издатель</span><br>
+        <b>profile · services/Profile/index.ts</b><br>
+        <code>export class Profile implements Profile.Service { ... }</code><br>
+        <code>static makeService(data) { ... }</code><br>
+        Публичные методы: <code>getName()</code>, <code>getPhone()</code>, <code>getAvatar()</code>
+      </div>
+      <div class="panel">
+        <span class="role r">читатель</span><br>
+        <b>cart</b> видит <i>только</i> <code>Profile.Service</code> через <code>resolveSync</code>.<br>
+        <code>model/store.ts</code> профиля для него не существует.
+      </div>
+      <div class="panel">
+        <span class="role w">никто</span><br>
+        <b>model/, containers/, components/</b> профиля — за стенкой капсулы. Другие модули туда не импортируют.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span><b>5</b> · runtime-окно №1 из 6</span>
+    <span>«спроси у меня — отвечу»</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var STAGE_W = 820;
+  var MIN_SCALE = 0.55;
+  var parentWidth = null;
+  function fit() {
+    var stage = document.querySelector('.stage');
+    if (!stage) return;
+    var w = parentWidth != null ? parentWidth : (document.documentElement.clientWidth || window.innerWidth);
+    var rawScale = w / STAGE_W;
+    var scale = Math.min(rawScale, 1);
+    if (w < 600) scale = Math.max(scale, MIN_SCALE);
+    stage.style.transformOrigin = 'top left';
+    stage.style.transform = 'scale(' + scale + ')';
+    stage.style.width = STAGE_W + 'px';
+    document.body.style.margin = '0';
+    document.body.style.overflowX = 'auto';
+    document.documentElement.style.overflowX = 'auto';
+    var visualH = Math.ceil(stage.offsetHeight * scale);
+    document.documentElement.style.height = visualH + 'px';
+    document.body.style.height = visualH + 'px';
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'infographic-height', height: visualH }, '*');
+    }
+  }
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (d && d.type === 'infographic-width' && typeof d.width === 'number') {
+      parentWidth = d.width;
+      fit();
+    }
+  });
+  fit();
+  window.addEventListener('resize', fit);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(fit).observe(document.querySelector('.stage'));
+  }
+  [60, 200, 600, 1500].forEach(function (d) { return setTimeout(fit, d); });
+  if (window.parent !== window) {
+    window.parent.postMessage({ type: 'infographic-ready' }, '*');
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Mobile Core — ООП на уровне модуля</title>
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #141822;
+    --panel-2: #1a1f2c;
+    --ink: #e9ecf2;
+    --muted: #8a93a3;
+    --accent: #7c5cff;
+    --accent2: #00d4a8;
+    --warn: #ffb454;
+    --danger: #ff5c7c;
+    --border: #232a38;
+    --ok: #2ec27e;
+    --cyan: #3dd6f5;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage {
+    width: 1600px;
+    height: 1200px;
+    margin: 0 auto;
+    padding: 44px 52px 40px;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 28px;
+    background:
+      radial-gradient(ellipse 900px 500px at 18% 30%, rgba(124,92,255,0.12), transparent 60%),
+      radial-gradient(ellipse 800px 480px at 82% 40%, rgba(0,212,168,0.10), transparent 55%),
+      var(--bg);
+  }
+  header.top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+  header.top h1 {
+    margin: 0;
+    font-size: 42px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  header.top h1 span { color: var(--accent); }
+  header.top p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 18px;
+    max-width: 520px;
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  /* Scale jump: object → module */
+  .scale {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 28px;
+    align-items: stretch;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 24px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .card.object::before {
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+  }
+  .card.module::before {
+    background: linear-gradient(90deg, var(--cyan), var(--accent2));
+  }
+  .card .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .card .badge .num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    border: 2px solid;
+  }
+  .card.object .num {
+    color: #c4b5fd;
+    border-color: var(--accent);
+    background: rgba(124,92,255,0.15);
+  }
+  .card.module .num {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    background: rgba(61,214,245,0.12);
+  }
+  .card .badge h2 {
+    margin: 0;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  .card .badge .sub {
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .window {
+    background: var(--panel-2);
+    border: 1.5px solid;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .card.object .window { border-color: rgba(124,92,255,0.55); }
+  .card.module .window { border-color: rgba(61,214,245,0.55); }
+  .window .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .card.object .titlebar {
+    background: rgba(124,92,255,0.12);
+    color: #c4b5fd;
+  }
+  .card.module .titlebar {
+    background: rgba(61,214,245,0.10);
+    color: var(--cyan);
+  }
+  .dots { display: flex; gap: 5px; }
+  .dots i {
+    width: 9px; height: 9px; border-radius: 50%;
+    display: block;
+  }
+  .dots i:nth-child(1) { background: #ff5f57; }
+  .dots i:nth-child(2) { background: #febc2e; }
+  .dots i:nth-child(3) { background: #28c840; }
+  .window .body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .box {
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid;
+  }
+  .box .label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .box ul {
+    margin: 0;
+    padding: 0 0 0 2px;
+    list-style: none;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .box.private {
+    border-color: rgba(124,92,255,0.35);
+    background: rgba(124,92,255,0.08);
+  }
+  .box.private .label { color: #c4b5fd; }
+  .box.public {
+    border-color: rgba(46,194,126,0.45);
+    background: rgba(46,194,126,0.08);
+  }
+  .box.public .label { color: var(--ok); }
+  .layer {
+    border-radius: 10px;
+    padding: 10px 14px;
+    border: 1px solid;
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  .layer .name {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .layer .desc {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .layer.model {
+    border-color: rgba(124,92,255,0.5);
+    background: rgba(124,92,255,0.12);
+  }
+  .layer.model .name { color: #c4b5fd; }
+  .layer.ui {
+    border-color: rgba(0,212,168,0.45);
+    background: rgba(0,212,168,0.10);
+  }
+  .layer.ui .name { color: var(--accent2); }
+  .layer.service {
+    border-color: rgba(255,180,84,0.5);
+    background: rgba(255,180,84,0.10);
+  }
+  .layer.service .name { color: var(--warn); }
+  .foot {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .foot strong { color: var(--accent2); font-weight: 600; }
+  .foot span { color: var(--muted); }
+
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 120px;
+  }
+  .arrow .glyph {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 2px solid rgba(124,92,255,0.55);
+    background:
+      radial-gradient(circle at 40% 35%, rgba(124,92,255,0.35), transparent 60%),
+      var(--panel);
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+  .arrow .glyph svg { width: 34px; height: 34px; }
+  .arrow .label {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.35;
+    max-width: 110px;
+  }
+  .arrow .label em {
+    font-style: normal;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* Three principles */
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .principle {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .principle::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .principle.enc::before {
+    background: radial-gradient(ellipse 80% 70% at 100% 0%, rgba(124,92,255,0.18), transparent 60%);
+  }
+  .principle.srp::before {
+    background: radial-gradient(ellipse 80% 70% at 100% 0%, rgba(255,180,84,0.16), transparent 60%);
+  }
+  .principle.comp::before {
+    background: radial-gradient(ellipse 80% 70% at 100% 0%, rgba(0,212,168,0.16), transparent 60%);
+  }
+  .principle .head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .principle .icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border: 1px solid;
+  }
+  .principle.enc .icon {
+    background: rgba(124,92,255,0.15);
+    border-color: rgba(124,92,255,0.45);
+    color: #c4b5fd;
+  }
+  .principle.srp .icon {
+    background: rgba(255,180,84,0.12);
+    border-color: rgba(255,180,84,0.45);
+    color: var(--warn);
+  }
+  .principle.comp .icon {
+    background: rgba(0,212,168,0.12);
+    border-color: rgba(0,212,168,0.45);
+    color: var(--accent2);
+  }
+  .principle .icon svg { width: 24px; height: 24px; }
+  .principle h3 {
+    margin: 0;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+  }
+  .principle .tag {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .principle p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .principle p strong {
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* Mini diagram inside each principle */
+  .mini {
+    margin-top: 4px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    min-height: 118px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Encapsulation mini: shell + lock */
+  .mini-enc {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .mini-enc .shell {
+    border: 2px dashed rgba(124,92,255,0.55);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: rgba(124,92,255,0.06);
+  }
+  .mini-enc .shell .inner {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .mini-enc .ports {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mini-enc .port {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(46,194,126,0.45);
+    background: rgba(46,194,126,0.12);
+    color: var(--ok);
+    white-space: nowrap;
+  }
+
+  /* SRP mini: three distinct contracts */
+  .mini-srp {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mini-srp .row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.2);
+    font-size: 12px;
+  }
+  .mini-srp .row .who { color: var(--muted); }
+  .mini-srp .row .what {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-weight: 600;
+  }
+  .mini-srp .row:nth-child(1) .what { color: var(--danger); }
+  .mini-srp .row:nth-child(2) .what { color: var(--warn); }
+  .mini-srp .row:nth-child(3) .what { color: var(--accent2); }
+
+  /* Composition mini: stacked layers */
+  .mini-comp {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .mini-comp .stack {
+    height: 22px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border: 1px solid;
+  }
+  .mini-comp .stack:nth-child(1) {
+    background: rgba(124,92,255,0.18);
+    border-color: rgba(124,92,255,0.45);
+    color: #c4b5fd;
+  }
+  .mini-comp .stack:nth-child(2) {
+    background: rgba(0,212,168,0.14);
+    border-color: rgba(0,212,168,0.4);
+    color: var(--accent2);
+  }
+  .mini-comp .stack:nth-child(3) {
+    background: rgba(255,180,84,0.14);
+    border-color: rgba(255,180,84,0.4);
+    color: var(--warn);
+  }
+  .mini-comp .stack:nth-child(4) {
+    background: rgba(61,214,245,0.12);
+    border-color: rgba(61,214,245,0.4);
+    color: var(--cyan);
+  }
+
+  footer.bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  footer.bottom strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  footer.bottom .brand {
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header class="top">
+    <h1>ООП, выросшее до <span>уровня модуля</span></h1>
+    <p>Те же принципы — другой масштаб:<br>от объекта к функциональной области продукта</p>
+  </header>
+
+  <section class="scale">
+    <article class="card object">
+      <div class="badge">
+        <div class="num">01</div>
+        <div>
+          <h2>ОБЪЕКТ</h2>
+          <div class="sub">одна сущность — чёткая граница</div>
+        </div>
+      </div>
+      <div class="window">
+        <div class="titlebar">
+          <span class="dots"><i></i><i></i><i></i></span>
+          UserProfile
+        </div>
+        <div class="body">
+          <div class="box private">
+            <div class="label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+              Private
+            </div>
+            <ul>
+              <li>− state</li>
+              <li>− validate()</li>
+              <li>− storage</li>
+            </ul>
+          </div>
+          <div class="box public">
+            <div class="label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>
+              Public
+            </div>
+            <ul>
+              <li>+ getName()</li>
+              <li>+ update(data)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <strong>внутри — состояние</strong><br>
+        <span>наружу — публичные методы</span>
+      </div>
+    </article>
+
+    <div class="arrow">
+      <div class="glyph">
+        <svg viewBox="0 0 40 40" fill="none">
+          <rect x="6" y="10" width="16" height="16" rx="3.5" stroke="#a78bfa" stroke-width="2"/>
+          <rect x="16" y="14" width="18" height="18" rx="4" stroke="#00d4a8" stroke-width="2.2"/>
+          <path d="M28 20h6m0 0-3-3m3 3-3 3" stroke="#00d4a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="label"><em>масштаб ↑</em><br>принципы те же</div>
+    </div>
+
+    <article class="card module">
+      <div class="badge">
+        <div class="num">02</div>
+        <div>
+          <h2>МОДУЛЬ</h2>
+          <div class="sub">функциональная область продукта</div>
+        </div>
+      </div>
+      <div class="window">
+        <div class="titlebar">
+          <span class="dots"><i></i><i></i><i></i></span>
+          profile · cart · order
+        </div>
+        <div class="body">
+          <div class="layer model">
+            <div class="name">model/</div>
+            <div class="desc">state · business logic · data</div>
+          </div>
+          <div class="layer ui">
+            <div class="name">ui/</div>
+            <div class="desc">containers · components · screens</div>
+          </div>
+          <div class="layer service">
+            <div class="name">service/</div>
+            <div class="desc">API для других модулей</div>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <strong>внутри — детали реализации</strong><br>
+        <span>наружу — публичные контракты</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="principles">
+    <article class="principle enc">
+      <div class="head">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="11" width="16" height="11" rx="2"/>
+            <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+            <circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <div>
+          <div class="tag">принцип 01</div>
+          <h3>Инкапсуляция</h3>
+        </div>
+      </div>
+      <p>Внутреннюю реализацию модуля можно менять, <strong>не ломая публичные контракты</strong>.</p>
+      <div class="mini">
+        <div class="mini-enc">
+          <div class="shell">
+            <div class="inner">
+              model · ui · adapters<br>
+              state · locale · …
+            </div>
+          </div>
+          <div class="ports">
+            <div class="port">service</div>
+            <div class="port">events</div>
+            <div class="port">routes</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="principle srp">
+      <div class="head">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="8" height="8" rx="1.5"/>
+            <rect x="13" y="3" width="8" height="8" rx="1.5"/>
+            <rect x="3" y="13" width="8" height="8" rx="1.5"/>
+            <rect x="13" y="13" width="8" height="8" rx="1.5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="tag">принцип 02</div>
+          <h3>Разделение ответственности</h3>
+        </div>
+      </div>
+      <p>Для разных способов взаимодействия — <strong>свои специализированные контракты</strong>.</p>
+      <div class="mini">
+        <div class="mini-srp">
+          <div class="row"><span class="who">другой модуль</span><span class="what">service</span></div>
+          <div class="row"><span class="who">подписка</span><span class="what">events</span></div>
+          <div class="row"><span class="who">навигация</span><span class="what">routes</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="principle comp">
+      <div class="head">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="5" rx="1.2"/>
+            <rect x="3" y="9.5" width="18" height="5" rx="1.2"/>
+            <rect x="3" y="16" width="18" height="5" rx="1.2"/>
+          </svg>
+        </div>
+        <div>
+          <div class="tag">принцип 03</div>
+          <h3>Композиция</h3>
+        </div>
+      </div>
+      <p>Модуль собирается из слоёв — <strong>каждый отвечает за свою часть работы</strong>.</p>
+      <div class="mini">
+        <div class="mini-comp">
+          <div class="stack">MODEL</div>
+          <div class="stack">UI</div>
+          <div class="stack">SERVICE</div>
+          <div class="stack">ADAPTERS</div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <footer class="bottom">
+    <span><strong>Модуль</strong> — «объект» большого масштаба: сложная логика внутри, снаружи только нужные контракты</span>
+    <span class="brand">MOBILE CORE</span>
+  </footer>
+</div>
+</body>
+</html>

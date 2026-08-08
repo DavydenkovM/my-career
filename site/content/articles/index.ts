@@ -6,14 +6,18 @@ import {
   articleRu as fsdRu,
   articleEn as fsdEn,
 } from "./feature-sliced-design-real-life";
+import {
+  articleRu as moduleRu,
+  articleEn as moduleEn,
+} from "./mobile-core-module";
 // import {
 //   articleRu as coreRu,
 //   articleEn as coreEn,
 // } from "./mobile-core-requirements";
 
 const articlesByLang: Record<Language, Article[]> = {
-  ru: [fsdRu, mobileRu],
-  en: [fsdEn, mobileEn],
+  ru: [moduleRu, fsdRu, mobileRu],
+  en: [moduleEn, fsdEn, mobileEn],
 };
 
 export const articlesBySlug: Record<string, Record<Language, Article>> = Object.fromEntries(
