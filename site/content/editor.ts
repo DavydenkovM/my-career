@@ -12,17 +12,15 @@ export const PILOT_CHAPTERS = ["why-module", "live-module", "bff-screens"];
 export const READY_SCORE = 90;
 
 export const BOOK_AXES: [string, string, number][] = [
-  ["story", "Рассказ", 15],
-  ["useful", "Когда пригодится", 15],
-  ["theory", "Мера теории", 10],
+  ["fold", "Свёртка: мысль и структура", 25],
+  ["unfold", "Развёртка: как мысль раскрыта", 20],
+  ["arc", "Дуга и сквозной пример", 10],
   ["figures", "Иллюстрации", 10],
   ["language", "Язык", 10],
-  ["truth", "Достоверность", 5],
+  ["line", "Люди и агенты", 5],
 ];
 
 export const PRACTICE_AXES: [string, string, number][] = [
-  ["reproducible", "Воспроизводимость", 10],
-  ["clear", "Понятность", 10],
-  ["observable", "Наблюдаемость", 10],
-  ["screencast", "Скринкаст", 5],
+  ["whole", "Цельность практики", 10],
+  ["observe", "Наблюдаемость", 10],
 ];
