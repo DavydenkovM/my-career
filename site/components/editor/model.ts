@@ -12,7 +12,21 @@ export type Chapter = {
   lesson?: LessonInfo;
 };
 
-export type Review = { rubric: string; date: string; by: string; score: number; axes: Record<string, number>; note: string; fix: string };
+export type Review = {
+  rubric: string;
+  date: string;
+  by: string;
+  score: number;
+  groups?: Record<string, number>;
+  items: Record<string, number>;
+  weak?: { id: string; reason: string }[];
+  note: string;
+  fix: string;
+};
+
+export type RubricItem = { id: string; weight: number; kind: string; label: string; source: string };
+export type RubricGroup = { key: string; label: string; weight: number; items: RubricItem[] };
+export type Rubric = { id: string; groups: RubricGroup[] };
 
 export type Target = "book" | "practice";
 

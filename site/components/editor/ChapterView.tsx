@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { BOOK_AXES, EDITORIAL_REPO, PRACTICE_AXES, READY_SCORE } from "@/content/editor";
+import { BOOK_GROUP, EDITORIAL_REPO, PRACTICE_GROUPS, READY_SCORE } from "@/content/editor";
 import type { Repo } from "./github";
-import { cleanMarkdown, stateOf, STATE_CLASS, STATE_LABEL, type Chapter, type Decision, type Note, type Review, type Target, type Verdict } from "./model";
+import { cleanMarkdown, stateOf, STATE_CLASS, STATE_LABEL, type Chapter, type Decision, type Note, type Review, type Rubric, type RubricGroup, type Target, type Verdict } from "./model";
 
-type Props = { repo: Repo; chapter: Chapter; target: Target; review?: Review; decision?: Decision; onSaved: (decision: Decision) => void };
+type Props = { repo: Repo; chapter: Chapter; target: Target; rubric: Rubric; review?: Review; decision?: Decision; onSaved: (decision: Decision) => void };
 
 function RepoImage({ repo, base, src, alt }: { repo: Repo; base: string; src?: string; alt?: string }) {
   const [url, setUrl] = useState("");
@@ -32,21 +32,41 @@ function RepoImage({ repo, base, src, alt }: { repo: Repo; base: string; src?: s
   return url ? <img src={url} alt={alt ?? ""} className="max-w-full" /> : <span className="block rounded bg-stone-100 p-4 text-xs text-stone-500">{alt}</span>;
 }
 
-function Axis({ label, value, weight }: { label: string; value?: number; weight: number }) {
-  const known = value !== undefined;
+const barColor = (value: number) => (value >= 75 ? "bg-emerald-600" : value >= 60 ? "bg-lime-600" : value >= 40 ? "bg-amber-500" : "bg-red-500");
 
+function Bar({ value }: { value: number }) {
   return (
-    <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 text-sm">
-      <span>{label}</span>
-      <span className="tabular-nums text-stone-600">{known ? value : "—"} <span className="text-xs text-stone-400">/ 2 · вес {weight}</span></span>
-      <span className="col-span-2 h-1.5 overflow-hidden rounded bg-stone-200">
-        <span className={`block h-full ${(value ?? 0) >= 2 ? "bg-emerald-600" : (value ?? 0) >= 1.5 ? "bg-lime-600" : "bg-amber-500"}`} style={{ width: `${((value ?? 0) / 2) * 100}%` }} />
-      </span>
-    </div>
+    <span className="col-span-2 block h-1.5 overflow-hidden rounded bg-stone-200">
+      <span className={`block h-full ${barColor(value)}`} style={{ width: `${value}%` }} />
+    </span>
   );
 }
 
-export function ChapterView({ repo, chapter, target, review, decision, onSaved }: Props) {
+function Group({ group, review }: { group: RubricGroup; review?: Review }) {
+  const value = review?.groups?.[group.key];
+  const items = group.items.filter(({ id }) => review?.items[id] !== undefined);
+
+  return (
+    <details className="group text-sm">
+      <summary className="grid cursor-pointer list-none grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1">
+        <span>{group.label}</span>
+        <span className="tabular-nums text-stone-600">{value ?? "—"} <span className="text-xs text-stone-400">/ 100 · вес {group.weight}</span></span>
+        <Bar value={value ?? 0} />
+      </summary>
+      <div className="mt-2 grid gap-2 border-l-2 border-stone-200 pl-3">
+        {items.map(({ id, label, kind }) => (
+          <div key={id} className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 text-xs">
+            <span>{label}{kind === "Ч" ? "" : <span className="text-stone-400"> · {kind === "А" ? "измерено" : "по скелету"}</span>}</span>
+            <span className="tabular-nums text-stone-600">{review?.items[id]}</span>
+            <Bar value={review?.items[id] ?? 0} />
+          </div>
+        ))}
+      </div>
+    </details>
+  );
+}
+
+export function ChapterView({ repo, chapter, target, rubric, review, decision, onSaved }: Props) {
   const [text, setText] = useState("");
   const [failed, setFailed] = useState("");
   const [note, setNote] = useState("");
@@ -179,10 +199,16 @@ export function ChapterView({ repo, chapter, target, review, decision, onSaved }
               <h2 className="font-semibold">Оценка</h2>
               <span className={`text-2xl font-semibold tabular-nums ${(review?.score ?? 0) >= READY_SCORE ? "text-emerald-700" : "text-red-700"}`}>{review?.score ?? "—"}</span>
             </div>
-            {(practice ? PRACTICE_AXES : BOOK_AXES).map(([key, label, weight]) => <Axis key={key} label={label} value={review?.axes[key]} weight={weight} />)}
+            {rubric.groups.filter(({ key }) => key !== BOOK_GROUP && PRACTICE_GROUPS.includes(key) === practice).map((group) => <Group key={group.key} group={group} review={review} />)}
             {review && (
               <>
                 <p className="text-sm"><b>Что видно.</b> {review.note}</p>
+                {review.weak && review.weak.length > 0 && (
+                  <div className="text-sm">
+                    <b>Слабее всего.</b>
+                    <ul className="ml-4 list-disc">{review.weak.map(({ id, reason }) => <li key={id}>{reason}</li>)}</ul>
+                  </div>
+                )}
                 <p className="text-sm"><b>Что поправить.</b> {review.fix}</p>
                 <p className="text-xs text-stone-500">Оценка от {review.date}, оценивал агент.</p>
               </>

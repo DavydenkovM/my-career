@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { PILOT_CHAPTERS, READY_SCORE } from "@/content/editor";
-import { isReady, openNotes, stateOf, STATE_CLASS, STATE_LABEL, waitsForEditor, type Chapter, type Decision, type Review, type State } from "./model";
+import { BOOK_GROUP, PILOT_CHAPTERS, READY_SCORE } from "@/content/editor";
+import { isReady, openNotes, stateOf, STATE_CLASS, STATE_LABEL, waitsForEditor, type Chapter, type Decision, type Review, type Rubric, type State } from "./model";
 
-type Props = { chapters: Chapter[]; reviews: Record<string, Review>; decisions: Record<string, Decision>; source: string };
+type Props = { chapters: Chapter[]; rubric: Rubric; reviews: Record<string, Review>; decisions: Record<string, Decision>; source: string };
 
 const FILTERS: [string, string][] = [
   ["all", "Все"],
@@ -27,7 +27,24 @@ function Stat({ value, label }: { value: string; label: string }) {
   );
 }
 
-export function Board({ chapters, reviews, decisions, source }: Props) {
+function BookScore({ rubric, review }: { rubric: Rubric; review?: Review }) {
+  const items = rubric.groups.find(({ key }) => key === BOOK_GROUP)?.items ?? [];
+
+  if (!review) return null;
+  return (
+    <details className="rounded border border-stone-200 bg-white p-3 text-sm">
+      <summary className="cursor-pointer font-medium">Книга целиком: {review.score} из 100</summary>
+      <p className="mt-2 text-stone-600">{review.note}</p>
+      <ul className="mt-2 grid gap-x-10 gap-y-1 md:grid-cols-2">
+        {items.filter(({ id }) => review.items[id] !== undefined).map(({ id, label }) => (
+          <li key={id} className="flex justify-between gap-3"><span>{label}</span><span className="tabular-nums text-stone-600">{review.items[id]}</span></li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
+export function Board({ chapters, rubric, reviews, decisions, source }: Props) {
   const [filter, setFilter] = useState("all");
   const [byScore, setByScore] = useState(false);
 
@@ -76,6 +93,8 @@ export function Board({ chapters, reviews, decisions, source }: Props) {
         <Stat value={`${bookDone} из ${chapters.length}`} label="книга утверждена" />
         <Stat value={`${practiceDone} из ${lessons.length}`} label="уроки утверждены" />
       </section>
+
+      <BookScore rubric={rubric} review={reviews._book} />
 
       <div className="flex flex-wrap items-center gap-2">
         {FILTERS.map(([value, label]) => (

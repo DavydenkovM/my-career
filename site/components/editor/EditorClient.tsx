@@ -4,14 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { EDITOR_LOCK } from "@/content/editor";
 import { AuthError, Repo } from "./github";
 import { lockToken, unlockToken } from "./lock";
-import type { Chapter, Decision, Review, Target } from "./model";
+import type { Chapter, Decision, Review, Rubric, Target } from "./model";
 import { Board } from "./Board";
 import { ChapterView } from "./ChapterView";
 
 const LOCK_KEY = "editor-lock";
 const TOKEN_KEY = "editor-token";
 
-type Data = { source: string; chapters: Chapter[]; reviews: Record<string, Review>; decisions: Record<string, Decision> };
+type Data = { source: string; chapters: Chapter[]; rubric: Rubric; reviews: Record<string, Review>; decisions: Record<string, Decision> };
 
 const read = (store: () => Storage, key: string) => {
   try {
@@ -151,13 +151,14 @@ export function EditorClient() {
   const load = useCallback(async (from: Repo) => {
     setError("");
     try {
-      const [index, reviews, decisions] = await Promise.all([
+      const [index, rubric, reviews, decisions] = await Promise.all([
         from.json<{ source: string; chapters: Chapter[] }>("index.json"),
+        from.json<Rubric>("rubric.json"),
         from.folder<Review>("reviews"),
         from.folder<Decision>("decisions"),
       ]);
 
-      setData({ ...index, reviews, decisions });
+      setData({ ...index, rubric, reviews, decisions });
     } catch (failure) {
       if (failure instanceof AuthError) {
         setError("GitHub не принял токен: он истёк или у него нет доступа к репозиторию. Создайте новый и настройте вход заново.");
@@ -208,13 +209,14 @@ export function EditorClient() {
       <main className="mx-auto max-w-7xl px-4 py-6">
         {error && <p className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</p>}
         {!data && !error && <p className="text-sm text-stone-600">Загружаю главы…</p>}
-        {data && !chapter && <Board chapters={data.chapters} reviews={data.reviews} decisions={data.decisions} source={data.source} />}
+        {data && !chapter && <Board chapters={data.chapters} rubric={data.rubric} reviews={data.reviews} decisions={data.decisions} source={data.source} />}
         {data && chapter && (
           <ChapterView
             key={chapter.slug}
             repo={repo}
             chapter={chapter}
             target={route.target}
+            rubric={data.rubric}
             review={data.reviews[chapter.slug]}
             decision={data.decisions[chapter.slug]}
             onSaved={(decision) => setData({ ...data, decisions: { ...data.decisions, [chapter.slug]: decision } })}
