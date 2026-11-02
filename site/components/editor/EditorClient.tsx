@@ -171,7 +171,7 @@ export function EditorClient() {
       const [index, rubric, reviews, decisions] = await Promise.all([
         from.json<{ source: string; chapters: Chapter[] }>("index.json"),
         from.json<Rubric>("rubric.json"),
-        from.folder<Review>("reviews"),
+        from.json<Record<string, Review>>("reviews.json"),
         from.folder<Decision>("decisions"),
       ]);
 

@@ -4,6 +4,14 @@ const API = `https://api.github.com/repos/${EDITORIAL_REPO}`;
 
 export class AuthError extends Error {}
 
+const retryTime = (headers: Headers) => {
+  const reset = Number(headers.get("x-ratelimit-reset"));
+  const pause = Number(headers.get("retry-after"));
+  const at = pause ? Date.now() + pause * 1000 : reset * 1000;
+
+  return at ? `Обновите страницу после ${new Date(at).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}.` : "Подождите и обновите страницу.";
+};
+
 const TYPES: Record<string, string> = { svg: "image/svg+xml", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif" };
 
 export class Repo {
@@ -20,7 +28,7 @@ export class Repo {
       const { message = "" } = await response.clone().json().catch(() => ({}));
       const limited = response.headers.get("x-ratelimit-remaining") === "0" || response.headers.has("retry-after") || /rate limit/i.test(message);
 
-      if (limited) throw new Error(`GitHub временно ограничил запросы (${response.status}). Подождите и обновите страницу.`);
+      if (limited) throw new Error(`Лимит запросов к GitHub на аккаунте исчерпан, он общий для всех ваших инструментов. ${retryTime(response.headers)}`);
       throw new AuthError(`${response.status}: ${message}`);
     }
     return response;
