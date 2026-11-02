@@ -15,6 +15,9 @@ const retryTime = (headers: Headers) => {
 const TYPES: Record<string, string> = { svg: "image/svg+xml", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif" };
 
 export class Repo {
+  /* An image is fetched once per session: the API limit is shared by the whole account */
+  private images = new Map<string, Promise<string>>();
+
   constructor(private token: string) {}
 
   private async call(path: string, init: RequestInit = {}, accept = "application/vnd.github+json") {
@@ -49,7 +52,18 @@ export class Repo {
     return JSON.parse(await this.text(path));
   }
 
-  async image(path: string) {
+  image(path: string) {
+    const known = this.images.get(path);
+
+    if (known) return known;
+    const made = this.loadImage(path);
+
+    this.images.set(path, made);
+    made.catch(() => this.images.delete(path));
+    return made;
+  }
+
+  private async loadImage(path: string) {
     const response = await this.raw(path);
 
     if (!response.ok) throw new Error(`${path}: ${response.status}`);

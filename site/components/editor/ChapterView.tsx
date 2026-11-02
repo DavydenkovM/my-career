@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { BOOK_GROUP, EDITORIAL_REPO, PRACTICE_GROUPS, READY_SCORE } from "@/content/editor";
@@ -15,22 +15,32 @@ function RepoImage({ repo, base, src, alt }: { repo: Repo; base: string; src?: s
   useEffect(() => {
     if (!src) return;
     let cancelled = false;
-    let made = "";
     const path = src.startsWith("../images/") ? `content/images/${src.slice("../images/".length)}` : `${base}/${src}`;
 
     repo.image(path).then((value) => {
-      made = value;
       if (!cancelled) setUrl(value);
     }).catch(() => undefined);
     return () => {
       cancelled = true;
-      if (made) URL.revokeObjectURL(made);
     };
   }, [repo, base, src]);
 
   /* eslint-disable-next-line @next/next/no-img-element */
   return url ? <img src={url} alt={alt ?? ""} className="max-w-full" /> : <span className="block rounded bg-stone-100 p-4 text-xs text-stone-500">{alt}</span>;
 }
+
+/*
+ * Memoised on purpose: selecting text and typing a note update the parent on every step.
+ * The components must keep their identity, or React remounts every image and refetches it.
+ */
+const ArticleText = memo(function ArticleText({ repo, base, text }: { repo: Repo; base: string; text: string }) {
+  const components = useMemo(() => ({
+    img: ({ src, alt }: { src?: string | Blob; alt?: string }) => <RepoImage repo={repo} base={base} src={typeof src === "string" ? src : undefined} alt={alt} />,
+    table: ({ children }: { children?: React.ReactNode }) => <div className="overflow-x-auto"><table>{children}</table></div>,
+  }), [repo, base]);
+
+  return <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{text}</ReactMarkdown>;
+});
 
 const barColor = (value: number) => (value >= 75 ? "bg-emerald-600" : value >= 60 ? "bg-lime-600" : value >= 40 ? "bg-amber-500" : "bg-red-500");
 
@@ -180,17 +190,7 @@ export function ChapterView({ repo, chapter, target, rubric, review, decision, o
           {failed && <p className="text-red-700">Не удалось загрузить текст: {failed}</p>}
           {practice && !hasLesson && <p>У этой главы нет урока.</p>}
           {!text && !failed && (!practice || hasLesson) && <p className="text-stone-500">Загружаю…</p>}
-          {text && (
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              components={{
-                img: ({ src, alt }) => <RepoImage repo={repo} base={base} src={src} alt={alt} />,
-                table: ({ children }) => <div className="overflow-x-auto"><table>{children}</table></div>,
-              }}
-            >
-              {text}
-            </ReactMarkdown>
-          )}
+          {text && <ArticleText repo={repo} base={base} text={text} />}
         </article>
 
         <aside className="grid content-start gap-4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto">
