@@ -16,7 +16,13 @@ export class Repo {
       headers: { Accept: accept, Authorization: `Bearer ${this.token}`, ...init.headers },
     });
 
-    if (response.status === 401 || response.status === 403) throw new AuthError(`GitHub ответил ${response.status}`);
+    if (response.status === 401 || response.status === 403) {
+      const { message = "" } = await response.clone().json().catch(() => ({}));
+      const limited = response.headers.get("x-ratelimit-remaining") === "0" || response.headers.has("retry-after") || /rate limit/i.test(message);
+
+      if (limited) throw new Error(`GitHub временно ограничил запросы (${response.status}). Подождите и обновите страницу.`);
+      throw new AuthError(`${response.status}: ${message}`);
+    }
     return response;
   }
 

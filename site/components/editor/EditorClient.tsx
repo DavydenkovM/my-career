@@ -24,7 +24,7 @@ const read = (store: () => Storage, key: string) => {
 const field = "w-full rounded border border-stone-300 bg-white px-3 py-2 text-sm focus:border-stone-500 focus:outline-none";
 const primary = "rounded bg-stone-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50";
 
-function Gate({ onToken }: { onToken: (token: string) => void }) {
+function Gate({ onToken, onReset }: { onToken: (token: string) => void; onReset: () => void }) {
   const [lock, setLock] = useState<string | null>(null);
   const [made, setMade] = useState("");
   const [token, setToken] = useState("");
@@ -84,6 +84,11 @@ function Gate({ onToken }: { onToken: (token: string) => void }) {
         </label>
         {error && <p className="text-sm text-red-700">{error}</p>}
         <button className={primary} disabled={busy || !password}>{busy ? "Проверяю…" : "Войти"}</button>
+        {!EDITOR_LOCK && (
+          <button type="button" className="justify-self-start text-sm underline" onClick={() => { onReset(); setLock(""); }}>
+            Настроить вход заново
+          </button>
+        )}
       </form>
     );
   }
@@ -126,6 +131,7 @@ export function EditorClient() {
   const [repo, setRepo] = useState<Repo | null>(null);
   const [data, setData] = useState<Data | null>(null);
   const [error, setError] = useState("");
+  const [denied, setDenied] = useState(false);
   const [route, setRoute] = useState<{ slug?: string; target: Target }>({ target: "book" });
   const [checked, setChecked] = useState(false);
 
@@ -148,8 +154,19 @@ export function EditorClient() {
     setData(null);
   }, []);
 
+  /* A new token needs the setup screen, and that screen only opens without the saved lock */
+  const reset = useCallback(() => {
+    try {
+      localStorage.removeItem(LOCK_KEY);
+    } catch {
+      /* nothing was kept */
+    }
+    leave();
+  }, [leave]);
+
   const load = useCallback(async (from: Repo) => {
     setError("");
+    setDenied(false);
     try {
       const [index, rubric, reviews, decisions] = await Promise.all([
         from.json<{ source: string; chapters: Chapter[] }>("index.json"),
@@ -161,7 +178,8 @@ export function EditorClient() {
       setData({ ...index, rubric, reviews, decisions });
     } catch (failure) {
       if (failure instanceof AuthError) {
-        setError("GitHub не принял токен: он истёк или у него нет доступа к репозиторию. Создайте новый и настройте вход заново.");
+        setDenied(true);
+        setError(`GitHub не принял токен (${failure.message}). Он истёк, отозван или у него нет доступа к репозиторию. Создайте новый и настройте вход заново.`);
       } else {
         setError(`Не удалось загрузить данные: ${(failure as Error).message}`);
       }
@@ -191,7 +209,7 @@ export function EditorClient() {
   if (!repo) {
     return (
       <main className="mx-auto max-w-md px-4 py-16">
-        <Gate onToken={enter} />
+        <Gate onToken={enter} onReset={reset} />
       </main>
     );
   }
@@ -207,7 +225,12 @@ export function EditorClient() {
         </div>
       </header>
       <main className="mx-auto max-w-7xl px-4 py-6">
-        {error && <p className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</p>}
+        {error && (
+          <div className="grid justify-items-start gap-2 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+            <p>{error}</p>
+            {denied && !EDITOR_LOCK && <button className="underline" onClick={reset}>Настроить вход заново</button>}
+          </div>
+        )}
         {!data && !error && <p className="text-sm text-stone-600">Загружаю главы…</p>}
         {data && !chapter && <Board chapters={data.chapters} rubric={data.rubric} reviews={data.reviews} decisions={data.decisions} source={data.source} />}
         {data && chapter && (
