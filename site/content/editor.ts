@@ -11,6 +11,6 @@ export const PILOT_CHAPTERS = ["why-module", "live-module", "bff-screens"];
 
 export const READY_SCORE = 90;
 
-export const PRACTICE_GROUPS = ["whole", "observe", "app", "purpose"];
+export const PRACTICE_GROUPS = ["whole", "observe", "app", "purpose", "learn"];
 
 export const BOOK_GROUP = "book";

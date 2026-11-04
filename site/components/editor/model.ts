@@ -22,6 +22,14 @@ export type Review = {
   weak?: { id: string; reason: string }[];
   note: string;
   fix: string;
+  /** The lesson: ready only when every stop item passes and a newcomer review is recorded */
+  practice?: {
+    ready: boolean;
+    stops: string[];
+    reviewed: boolean;
+    parts: { title: string; scores: Record<string, number>; note: string }[];
+    lint: string[];
+  };
 };
 
 export type RubricItem = { id: string; weight: number; kind: string; label: string; source: string };

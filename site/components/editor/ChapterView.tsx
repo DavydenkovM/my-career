@@ -199,6 +199,7 @@ export function ChapterView({ repo, chapter, target, rubric, review, decision, o
               <h2 className="font-semibold">Оценка</h2>
               <span className={`text-2xl font-semibold tabular-nums ${(review?.score ?? 0) >= READY_SCORE ? "text-emerald-700" : "text-red-700"}`}>{review?.score ?? "—"}</span>
             </div>
+            {practice && review?.practice && <PracticeGate gate={review.practice} />}
             {rubric.groups.filter(({ key }) => key !== BOOK_GROUP && PRACTICE_GROUPS.includes(key) === practice).map((group) => <Group key={group.key} group={group} review={review} />)}
             {review && (
               <>
@@ -264,6 +265,47 @@ export function ChapterView({ repo, chapter, target, rubric, review, decision, o
           )}
         </aside>
       </div>
+    </div>
+  );
+}
+
+/* Whether the lesson may be read at all, and which part of it pulls it down */
+function PracticeGate({ gate }: { gate: NonNullable<Review["practice"]> }) {
+  const mean = (scores: Record<string, number>) => {
+    const values = Object.values(scores);
+
+    return values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : undefined;
+  };
+
+  return (
+    <div className="grid gap-2 text-sm">
+      <p className={gate.ready ? "font-semibold text-emerald-700" : "font-semibold text-red-700"}>
+        {gate.ready
+          ? "Практика прошла стоп-пункты"
+          : `Практика не готова: ${gate.reviewed ? `стоп-пункты ${gate.stops.join(", ")}` : "нет проверки глазами новичка"}`}
+      </p>
+      {gate.parts.length > 0 && (
+        <table className="w-full text-xs">
+          <tbody>
+            {gate.parts.map((part) => {
+              const value = mean(part.scores);
+
+              return (
+                <tr key={part.title} className="border-t border-stone-100 align-top">
+                  <td className="py-1 pr-2">{part.title}<div className="text-stone-500">{part.note}</div></td>
+                  <td className={`py-1 text-right tabular-nums ${(value ?? 0) >= 60 ? "text-emerald-700" : "text-red-700"}`}>{value ?? "—"}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+      {gate.lint.length > 0 && (
+        <details>
+          <summary className="cursor-pointer">lesson:lint · {gate.lint.length}</summary>
+          <ul className="ml-4 list-disc text-xs">{gate.lint.map((line) => <li key={line}>{line}</li>)}</ul>
+        </details>
+      )}
     </div>
   );
 }
