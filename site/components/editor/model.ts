@@ -12,6 +12,15 @@ export type Chapter = {
   lesson?: LessonInfo;
 };
 
+export type Gate = {
+  ready: boolean;
+  stops: string[];
+  reviewed: boolean;
+  review?: string;
+  parts: { title: string; scores: Record<string, number>; note: string }[];
+  lint: string[];
+};
+
 export type Review = {
   rubric: string;
   date: string;
@@ -23,13 +32,9 @@ export type Review = {
   note: string;
   fix: string;
   /** The lesson: ready only when every stop item passes and a newcomer review is recorded */
-  practice?: {
-    ready: boolean;
-    stops: string[];
-    reviewed: boolean;
-    parts: { title: string; scores: Record<string, number>; note: string }[];
-    lint: string[];
-  };
+  practice?: Gate;
+  /** The text of the chapter, scored paragraph by paragraph */
+  text?: Gate;
 };
 
 export type RubricItem = { id: string; weight: number; kind: string; label: string; source: string };

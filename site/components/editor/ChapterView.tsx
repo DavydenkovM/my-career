@@ -2,9 +2,9 @@
 
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { BOOK_GROUP, EDITORIAL_REPO, PRACTICE_GROUPS, READY_SCORE } from "@/content/editor";
 import type { Repo } from "./github";
+import { Div, followLink, rehypePlugins, remarkPlugins, showAnchor } from "./markdown";
 import { cleanMarkdown, stateOf, STATE_CLASS, STATE_LABEL, type Chapter, type Decision, type Note, type Review, type Rubric, type RubricGroup, type Target, type Verdict } from "./model";
 
 type Props = { repo: Repo; chapter: Chapter; target: Target; rubric: Rubric; review?: Review; decision?: Decision; onSaved: (decision: Decision) => void };
@@ -37,9 +37,21 @@ const ArticleText = memo(function ArticleText({ repo, base, text }: { repo: Repo
   const components = useMemo(() => ({
     img: ({ src, alt }: { src?: string | Blob; alt?: string }) => <RepoImage repo={repo} base={base} src={typeof src === "string" ? src : undefined} alt={alt} />,
     table: ({ children }: { children?: React.ReactNode }) => <div className="overflow-x-auto"><table>{children}</table></div>,
+    div: Div,
   }), [repo, base]);
 
-  return <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{text}</ReactMarkdown>;
+  /* A link from another chapter names an anchor here: show it once the text is drawn */
+  useEffect(() => {
+    const anchor = sessionStorage.getItem("anchor");
+
+    if (anchor && showAnchor(anchor)) sessionStorage.removeItem("anchor");
+  }, [text]);
+
+  return (
+    <div onClick={followLink}>
+      <ReactMarkdown remarkPlugins={remarkPlugins} rehypePlugins={rehypePlugins} components={components}>{text}</ReactMarkdown>
+    </div>
+  );
 });
 
 const barColor = (value: number) => (value >= 75 ? "bg-emerald-600" : value >= 60 ? "bg-lime-600" : value >= 40 ? "bg-amber-500" : "bg-red-500");
@@ -199,7 +211,8 @@ export function ChapterView({ repo, chapter, target, rubric, review, decision, o
               <h2 className="font-semibold">Оценка</h2>
               <span className={`text-2xl font-semibold tabular-nums ${(review?.score ?? 0) >= READY_SCORE ? "text-emerald-700" : "text-red-700"}`}>{review?.score ?? "—"}</span>
             </div>
-            {practice && review?.practice && <PracticeGate gate={review.practice} />}
+            {practice && review?.practice && <Gate gate={review.practice} what="Практика" />}
+            {!practice && review?.text && <Gate gate={review.text} what="Глава" />}
             {rubric.groups.filter(({ key }) => key !== BOOK_GROUP && PRACTICE_GROUPS.includes(key) === practice).map((group) => <Group key={group.key} group={group} review={review} />)}
             {review && (
               <>
@@ -211,7 +224,7 @@ export function ChapterView({ repo, chapter, target, rubric, review, decision, o
                   </div>
                 )}
                 <p className="text-sm"><b>Что поправить.</b> {review.fix}</p>
-                <p className="text-xs text-stone-500">Оценка от {review.date}, оценивал агент.</p>
+                <p className="text-xs text-stone-500">Оценка от {review.date}. Числа по чтению ставит независимый рецензент; пока он не проверил эту версию, они 0.</p>
               </>
             )}
             <p className="text-xs text-stone-500">
@@ -270,25 +283,26 @@ export function ChapterView({ repo, chapter, target, rubric, review, decision, o
 }
 
 /* Whether the lesson may be read at all, and which part of it pulls it down */
-function PracticeGate({ gate }: { gate: NonNullable<Review["practice"]> }) {
-  const mean = (scores: Record<string, number>) => {
+/* Whether the text may go to the editor: stop items, the independent review, the findings of the checks */
+function Gate({ gate, what }: { gate: NonNullable<Review["practice"]>; what: string }) {
+  /* A part is as good as its weakest item, as the text is as good as its weakest part */
+  const weakest = (scores: Record<string, number>) => {
     const values = Object.values(scores);
 
-    return values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : undefined;
+    return values.length ? Math.min(...values) : undefined;
   };
+  const problems = [gate.reviewed ? "" : gate.review ?? "нет независимой проверки", gate.stops.length ? `стоп-пункты ниже 60: ${gate.stops.join(", ")}` : ""].filter(Boolean);
 
   return (
     <div className="grid gap-2 text-sm">
       <p className={gate.ready ? "font-semibold text-emerald-700" : "font-semibold text-red-700"}>
-        {gate.ready
-          ? "Практика прошла стоп-пункты"
-          : `Практика не готова: ${gate.reviewed ? `стоп-пункты ${gate.stops.join(", ")}` : "нет проверки глазами новичка"}`}
+        {gate.ready ? `${what} прошла стоп-пункты` : `${what} не готова: ${problems.join("; ")}`}
       </p>
       {gate.parts.length > 0 && (
         <table className="w-full text-xs">
           <tbody>
             {gate.parts.map((part) => {
-              const value = mean(part.scores);
+              const value = weakest(part.scores);
 
               return (
                 <tr key={part.title} className="border-t border-stone-100 align-top">
@@ -302,7 +316,7 @@ function PracticeGate({ gate }: { gate: NonNullable<Review["practice"]> }) {
       )}
       {gate.lint.length > 0 && (
         <details>
-          <summary className="cursor-pointer">lesson:lint · {gate.lint.length}</summary>
+          <summary className="cursor-pointer">Находки проверки · {gate.lint.length}</summary>
           <ul className="ml-4 list-disc text-xs">{gate.lint.map((line) => <li key={line}>{line}</li>)}</ul>
         </details>
       )}
